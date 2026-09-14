@@ -1,0 +1,174 @@
+{
+  "module": "./formula.js",
+  "export": "springRate",
+  "tolerance": 1e-07,
+  "note": "Reproduces the source sheet exactly: it gives 37.55029169 and 32.40546431 N/mm at the wheel and 39.83710445 and 71.94337131 at the spring for these inputs. The formula in the sheet was correct; the changes here are separate front and rear frequency targets, and an explicit statement that unsprung mass is per corner.",
+  "cases": [
+    {
+      "name": "Sheet defaults, 2.0 Hz both ends",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2
+      },
+      "expect": {
+        "frontAxle": 575.58,
+        "rearAxle": 510.42,
+        "front": {
+          "cornerMass": 287.79,
+          "sprungMass": 237.79,
+          "unsprungShare": 0.173737795,
+          "wheelRate": 37.550291689,
+          "springRate": 39.837104452,
+          "perHundredthRatio": 0.777291038,
+          "perTenthHz": 4.083303206,
+          "perKgUnsprung": 0.167530613
+        },
+        "rear": {
+          "cornerMass": 255.21,
+          "sprungMass": 205.21,
+          "unsprungShare": 0.195917088,
+          "wheelRate": 32.405464306,
+          "springRate": 71.943371313,
+          "perHundredthRatio": 0.968923383,
+          "perTenthHz": 7.374195559,
+          "perKgUnsprung": 0.35058414
+        },
+        "frequencySplit": 1.0
+      }
+    },
+    {
+      "name": "A motion ratio of 1 makes spring rate equal wheel rate",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1,
+        "motionRatioRear": 1,
+        "frequencyFront": 2,
+        "frequencyRear": 2
+      },
+      "expect": {
+        "front": {
+          "cornerMass": 287.79,
+          "sprungMass": 237.79,
+          "unsprungShare": 0.173737795,
+          "wheelRate": 37.550291689,
+          "springRate": 37.550291689,
+          "perHundredthRatio": 0.754760863,
+          "perTenthHz": 3.848904898,
+          "perKgUnsprung": 0.15791367
+        },
+        "rear": {
+          "cornerMass": 255.21,
+          "sprungMass": 205.21,
+          "unsprungShare": 0.195917088,
+          "wheelRate": 32.405464306,
+          "springRate": 32.405464306,
+          "perHundredthRatio": 0.651349833,
+          "perTenthHz": 3.321560091,
+          "perKgUnsprung": 0.15791367
+        }
+      }
+    },
+    {
+      "name": "Separate targets give a front-to-rear split",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2.0,
+        "frequencyRear": 2.2
+      },
+      "expect": {
+        "frequencySplit": 1.1,
+        "rear": {
+          "cornerMass": 255.21,
+          "sprungMass": 205.21,
+          "unsprungShare": 0.195917088,
+          "wheelRate": 39.210611811,
+          "springRate": 87.051479281,
+          "perHundredthRatio": 1.172397293,
+          "perTenthHz": 8.093629272,
+          "perKgUnsprung": 0.424206809
+        }
+      }
+    },
+    {
+      "name": "Rate goes as frequency squared: doubling f quadruples the rate",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 4,
+        "frequencyRear": 4
+      },
+      "expect": {
+        "front": {
+          "cornerMass": 287.79,
+          "sprungMass": 237.79,
+          "unsprungShare": 0.173737795,
+          "wheelRate": 150.201166754,
+          "springRate": 159.34841781,
+          "perHundredthRatio": 3.109164152,
+          "perTenthHz": 8.067013652,
+          "perKgUnsprung": 0.670122452
+        }
+      }
+    },
+    {
+      "name": "Unsprung mass larger than the corner is rejected, not negated",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 300,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2
+      },
+      "expectError": true
+    },
+    {
+      "name": "A front share of 100 percent leaves no rear axle and is rejected",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 100,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2
+      },
+      "expectError": true
+    },
+    {
+      "name": "Zero motion ratio is rejected rather than giving a zero rate",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 0,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2
+      },
+      "expectError": true
+    }
+  ]
+}

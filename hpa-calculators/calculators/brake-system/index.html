@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brake System Calculator | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Brake System Calculator</h2>
+      <p class="sheet__intro">Required brake bias, line pressures and the pedal that results.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Brake System Calculator</h1>
+      <p class="calc__intro">
+        What share of the braking the front axle should take, the line
+        pressures that need, and where it leaves the pedal and the bias bar.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Sprint. 280mm front">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <details class="guide-panel">
+    <summary class="guide-panel__toggle">
+      <span class="section__chevron"></span>
+      How to use this
+    </summary>
+    <div class="guide-panel__body">
+      <div class="guide">
+        <p class="guide__lead">
+          Braking wants each axle to work in proportion to the load it is
+          carrying. Load moves forward as the car slows, so the share the
+          front should take <em>climbs with deceleration</em>, and a fixed
+          bias bar cannot follow it. Every setting is therefore a compromise,
+          and the useful question is which deceleration to be right at.
+        </p>
+        <ol class="guide__steps">
+          <li><strong>Enter the brakes you have.</strong> Calipers and
+            rotors are the fixed part of the problem; the cylinders are what
+            you choose around them, so the calculator recommends a pair and
+            lists the alternatives beside it.</li>
+          <li><strong>Pick the deceleration that matters.</strong> Not the
+            highest you can reach. The one where getting the balance wrong
+            costs you, usually hard braking into your slowest corner. That
+            is your design point.</li>
+          <li><strong>Read the required bias, then the sweep.</strong> The
+            table shows what the car wants at every deceleration. The spread
+            across it is the compromise you are making; a car with a low
+            centre of gravity has a flatter spread and is easier to set up.</li>
+          <li><strong>Judge a pair on its adjustment window, not just on
+            whether it works.</strong> A bar parked near one end of its
+            travel has nothing left in the direction you will eventually
+            want it. The pairs are ranked on bar centring first for that
+            reason. A slightly heavier pedal with the bar at 55% beats a
+            perfect pedal with the bar at 64%.</li>
+          <li><strong>Read the plot as one question: is the thick blue line
+            in the green?</strong> The black line is optimal bias. Green is
+            the target. Front of optimal, but by no more than 7 points. Red
+            is below optimal, where the rear locks first, and that is the
+            region to stay out of at any cost. Grey above is safe but the
+            front is doing more work than it needs to. The thin blue lines
+            are what the bias bar can reach at each end of its travel.</li>
+          <li><strong>Use a valve to bend the line, not to trim it.</strong>
+            Without one the blue line is flat, so it can only be in the green
+            over a narrow range. A proportioning valve kinks it upward so it
+            follows the optimal line, which widens that range. Watch the
+            band figure as you change the knee point and slope.</li>
+          <li><strong>Then judge the pedal.</strong> Effort and travel are
+            what you actually feel. Around 30 to 40mm of travel with an
+            effort you can modulate repeatedly is the target; a pedal that is
+            too light is as hard to be precise with as one that is too heavy.</li>
+          <li><strong>Validate on track and come back.</strong> Lock-up tells
+            you which end is over-braked far more reliably than any
+            calculation. Adjust, note what worked, and re-enter it so the
+            next change starts from something real.</li>
+        </ol>
+        <p class="guide__note">
+          Pad friction is the least trustworthy input here: a figure from a
+          catalogue is one temperature on one rotor, and it moves with heat,
+          bedding and speed. Treat the pressures as a design starting point
+          rather than a specification.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input car data</span>
+        <span class="switch-set">
+          <span class="unit-switch">
+            <label>
+              <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+              <span class="unit-switch__label">mm</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+              <span class="unit-switch__label">inch</span>
+            </label>
+          </span>
+          <span class="unit-switch">
+            <label>
+              <input class="unit-switch__radio" type="radio" name="pressureUnit" value="kPa" checked>
+              <span class="unit-switch__label">kPa</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="pressureUnit" value="bar">
+              <span class="unit-switch__label">bar</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="pressureUnit" value="psi">
+              <span class="unit-switch__label">psi</span>
+            </label>
+          </span>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups groups--dense groups--dense-4">
+          <div class="group">
+            <h2 class="group__title">Car</h2>
+
+            <div class="field">
+              <label class="field__label" for="wheelbase">Wheelbase</label>
+              <div class="field__control">
+                <input class="input" type="number" id="wheelbase" name="wheelbase"
+                       value="2400" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="totalMass">Total mass
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="As raced, with driver and the fuel load you brake hardest on.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="totalMass" name="totalMass"
+                       value="835.5" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="frontPercent">On the front axle</label>
+              <div class="field__control">
+                <input class="input" type="number" id="frontPercent" name="frontPercent"
+                       value="65.8" step="0.1" min="0" max="100" inputmode="decimal">
+                <span class="field__unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="cogHeight">Centre of gravity height
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="It sets how much load moves forward, so it drives the whole bias answer. Measure it with the centre of gravity calculator rather than estimating.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="cogHeight" name="cogHeight"
+                       value="450" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Pedal and targets</h2>
+
+            <div class="field">
+              <label class="field__label" for="decel">Design deceleration
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="The braking event worth being right at, usually into your slowest corner. Road cars on good tyres reach about 1.0 G, slicks 1.4 to 1.8. Not the maximum you can reach, but the one where balance matters most.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="decel" name="decel"
+                       value="1.1" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit">G</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pedalRatio">Pedal ratio
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Pedal pad travel divided by pushrod travel. Typically 4:1 to 6:1 without a servo. Higher multiplies your foot but lengthens the pedal stroke.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="pedalRatio" name="pedalRatio"
+                       value="5" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="targetPedalEffort">Target pedal effort
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="The force you want to be pushing at the design deceleration. 40 to 70 kg suits most drivers; the master cylinder sizes below are worked back from it.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="targetPedalEffort" name="targetPedalEffort"
+                       value="50" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="targetPedalTravel">Target pedal travel
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="How far you want the pedal to move at the design deceleration. 30 to 40mm suits most drivers. Effort and travel are not independent. For given rotors and pads their product is fixed, so asking for a light pedal means accepting a long one.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="targetPedalTravel" name="targetPedalTravel"
+                       value="35" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field__head">
+                <span class="field__label" id="valve-label">Proportioning valve
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="A valve slows the rise of rear pressure above a set point, so the rear stops gaining brake as hard as the front. It can only hold rear pressure back, never add it. Knee point and slope apply only when one is fitted.">?</button>
+                </span>
+                <label class="toggle">
+                  <input class="toggle__input" type="checkbox" id="valveFitted" name="valveFitted">
+                  <span class="toggle__track" aria-hidden="true"><span class="toggle__knob"></span></span>
+                  <span class="sr-only">Proportioning valve fitted</span>
+                </label>
+              </div>
+              <div class="field-row" role="group" aria-labelledby="valve-label">
+                <span class="field__control field-row__cell">
+                  <input class="input" type="number" id="kneePsi" name="kneePsi"
+                         value="2070" step="10" min="0" inputmode="decimal"
+                         aria-label="Proportioning valve knee point" disabled>
+                  <span class="field__unit" data-unit="pressure">kPa</span>
+                </span>
+
+                <span class="field__control field-row__cell">
+                  <input class="input" type="number" id="slope" name="slope"
+                         value="3" step="0.1" min="0" inputmode="decimal"
+                         aria-label="Proportioning valve slope" disabled>
+                  <span class="field__unit">: 1</span>
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="group">
+            <h2 class="group__title">Front axle</h2>
+
+            <div class="field">
+              <label class="field__label" for="tyreFront">Tyre size
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="As written on the sidewall: 235/45R18. Slashes, dashes or spaces all work. The loaded radius below is worked out from it, which is what the torque figures actually need.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="text" id="tyreFront" name="tyreFront"
+                       value="235/45R17" inputmode="text" spellcheck="false" placeholder="235/45R18">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="downforceFront">Downforce, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="At the speed you are braking from, as a mass. Leave at zero for a car without meaningful aero. It adds load, so it pushes the required bias forward.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="downforceFront" name="downforceFront"
+                       value="0" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Rear axle</h2>
+
+            <div class="field">
+              <label class="field__label" for="tyreRear">Tyre size
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="As written on the sidewall: 235/45R18. Slashes, dashes or spaces all work. The loaded radius below is worked out from it, which is what the torque figures actually need.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="text" id="tyreRear" name="tyreRear"
+                       value="235/45R17" inputmode="text" spellcheck="false" placeholder="235/45R18">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="downforceRear">Downforce, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="downforceRear" name="downforceRear"
+                       value="0" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Front brakes</h2>
+
+            <div class="field">
+              <label class="field__label" for="rotorFront">Rotor diameter</label>
+              <div class="field__control">
+                <input class="input" type="number" id="rotorFront" name="rotorFront"
+                       value="280" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="padDepthFront">Pad radial depth
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="How far the pad reaches in from the rotor edge, not a radius. Typically 35 to 50mm. Entering a radius here would roughly halve the answer.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="padDepthFront" name="padDepthFront"
+                       value="42" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="muFront">Pad friction
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Road pads 0.35 to 0.45, track pads 0.5 to 0.65. The least reliable input here: a catalogue figure is one temperature on one rotor and it moves with heat.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="muFront" name="muFront"
+                       value="0.6" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">&#181;</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Rear brakes</h2>
+
+            <div class="field">
+              <label class="field__label" for="rotorRear">Rotor diameter</label>
+              <div class="field__control">
+                <input class="input" type="number" id="rotorRear" name="rotorRear"
+                       value="260" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="padDepthRear">Pad radial depth</label>
+              <div class="field__control">
+                <input class="input" type="number" id="padDepthRear" name="padDepthRear"
+                       value="42" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="muRear">Pad friction
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Matching front and rear compounds keeps the balance steady as the brakes heat up. Different compounds fade at different rates, which moves the bias mid-stint.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="muRear" name="muRear"
+                       value="0.4" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">&#181;</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Front caliper</h2>
+
+            <div class="field">
+              <label class="field__label" for="pistonFront1">Piston 1
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="One side of the caliper only. A four-pot opposed caliper has two pistons per side; enter both, and a third if the caliper is staggered. Leave unused ones at zero.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonFront1" name="pistonFront1"
+                       value="35" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pistonFront2">Piston 2</label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonFront2" name="pistonFront2"
+                       value="35" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pistonFront3">Piston 3</label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonFront3" name="pistonFront3"
+                       value="0" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Rear caliper</h2>
+
+            <div class="field">
+              <label class="field__label" for="pistonRear1">Piston 1</label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonRear1" name="pistonRear1"
+                       value="44.45" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pistonRear2">Piston 2</label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonRear2" name="pistonRear2"
+                       value="0" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pistonRear3">Piston 3</label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonRear3" name="pistonRear3"
+                       value="0" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Results</div>
+      <div class="section__body">
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" id="mc-readout" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Master cylinders, front</p>
+                <p class="readout__figure">
+                  <span id="boreFront">—</span>
+                  <span class="readout__unit" data-unit="length">mm</span>
+                </p>
+                <p class="readout__alt readout__alt--steady" id="boreFront-alt"></p>
+              </div>
+              <div class="readout__body">
+                <p class="readout__label">Master cylinders, rear</p>
+                <p class="readout__figure">
+                  <span id="boreRear">—</span>
+                  <span class="readout__unit" data-unit="length">mm</span>
+                </p>
+                <p class="readout__alt readout__alt--steady" id="boreRear-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced groups--dense">
+              <div class="group">
+                <h2 class="group__title">What that pair gives you</h2>
+
+                <div class="field">
+                  <label class="field__label">Bias bar sits at
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Where the bar has to sit to deliver the bias the car wants. Near 50% is what you want: a bar parked at one end of its travel has no adjustment left in the direction you will eventually need it.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="biasBar-control">
+                    <input class="input input--result" id="biasBar" readonly tabindex="-1" value="—">
+                    <span class="field__unit">% front</span>
+                  </div>
+                </div>
+
+
+                <div class="field">
+                  <label class="field__label">Pedal effort</label>
+                  <div class="field__control field__control--result" id="pedalEffort-control">
+                    <input class="input input--result" id="pedalEffort" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="mass">kg</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Pedal travel
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Around 30 to 40mm is the usual target. Shorter feels wooden and hard to modulate; longer feels slow to respond.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="pedalTravel-control">
+                    <input class="input input--result" id="pedalTravel" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="length">mm</span>
+                  </div>
+                </div>
+
+
+                <p class="group__note group__note--screen" id="feel-note"></p>
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">What the car asks for</h2>
+
+                <div class="field">
+                  <label class="field__label">Front brake bias needed
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Share of braking torque the front must take for both axles to work in proportion to their load, at your design deceleration.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="frontBias" readonly tabindex="-1" value="—">
+                    <span class="field__unit">% front</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">In the target band
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="The deceleration range over which your hardware sits in the green: front-biased, but by no more than 7 points. Below the band the rear locks first, which is the condition to avoid. A proportioning valve widens this range by bending the delivered line.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="coverage-control">
+                    <input class="input input--result" id="coverage" readonly tabindex="-1" value="—">
+                    <span class="field__unit">G</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Line pressure, front</label>
+                  <div class="field__control field__control--result" id="pressureFront-control">
+                    <input class="input input--result" id="pressureFront" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="pressure">kPa</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Line pressure, rear</label>
+                  <div class="field__control field__control--result" id="pressureRear-control">
+                    <input class="input input--result" id="pressureRear" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="pressure">kPa</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">Other pairs worth a look
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="Standard bores ranked on bias bar centring first, then pedal effort against your target, then travel and stroke balance. Enter a pair above to report on it instead.">?</button>
+                </h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="table__head table__head--label">Front</th>
+                        <th class="table__head table__head--label">Rear</th>
+                        <th class="table__head">Bar</th>
+                        <th class="table__head" id="pedal-head">Pedal</th>
+                      </tr>
+                    </thead>
+                    <tbody id="option-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="brake-svg" viewBox="0 0 340 352"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="brake-desc">
+                <desc id="brake-desc">Required front brake bias plotted against deceleration, with the design point marked and the deceleration at which the rear axle lifts.</desc>
+                <g id="brake-scene"></g>
+              </svg>
+            </div>
+            <div class="notice" id="warnings" role="status" hidden></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Steady-state deceleration with all four wheels on the ground. Past the lift point shown, none of these figures apply.</li>
+      <li>Pad friction is a single constant. It moves with temperature, speed and bedding, which is the largest source of error here.</li>
+      <li>Both axles are assumed to run the same tyre compound, and tyre load sensitivity is ignored. That shifts the ideal bias slightly rearward.</li>
+      <li>Tyres are rigid and the loaded radius from the tyre size is used throughout.</li>
+      <li>Pad depth is the radial depth of the pad. Effective radius is the mean of the swept annulus.</li>
+      <li>A proportioning valve divides the rear pressure rise above its knee point. It can hold rear pressure back, never add to it.</li>
+      <li>Downforce is held constant at the braking speed, though in reality it falls away as the car slows.</li>
+      <li>Thermal limits, hose expansion, pad taper and caliper flex are not modelled.</li>
+      <li>Pedal effort multiplied by pedal travel is fixed by the torque required, the pad friction and the rotor radius. Cylinder bore and pedal ratio move you along that curve but cannot shift it.</li>
+      <li>Figures are a design starting point. Lock-up on track tells you which end is over-braked far more reliably.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    brakeSystem, biasPlot, warnings, verdict, explain, loadedRadius, parseTyre,
+    MASTER_CYLINDERS,
+  } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+    convertUnitFields, otherPressureUnits,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const lengthUnit = () => (form.elements.units.value === 'imperial' ? 'in' : 'mm');
+  const massUnit = () => (form.elements.units.value === 'imperial' ? 'lb' : 'kg');
+
+  /* Pressure gets its own control: brake work is quoted in kPa, bar and psi
+     depending where you learned it, and two of those are metric. */
+  const pressureUnit = () => form.elements.pressureUnit.value;
+
+  /* Knee point and slope stay in place whether a valve is fitted or not, and
+     are disabled rather than hidden. Nothing appears or disappears, so the
+     page never reflows when the switch is thrown, and disabled, not merely
+     greyed, keeps them out of the tab order and tells a screen reader they
+     are inactive. */
+  function setValveState() {
+    const on = form.elements.valveFitted.checked;
+    for (const id of ['kneePsi', 'slope']) $(id).disabled = !on;
+  }
+
+  function setUnitLabels() {
+    const imperial = form.elements.units.value === 'imperial';
+    for (const el of document.querySelectorAll('[data-unit="length"]')) {
+      el.textContent = imperial ? 'in' : 'mm';
+    }
+    for (const el of document.querySelectorAll('[data-unit="mass"]')) {
+      el.textContent = imperial ? 'lb' : 'kg';
+    }
+    for (const el of document.querySelectorAll('[data-unit="pressure"]')) {
+      el.textContent = pressureUnit();
+    }
+  }
+
+  function onUnitChange(previous) {
+    const next = form.elements.units.value;
+    if (next === previous) return next;
+    convertEditableFields(previous, next);
+    setUnitLabels();
+    return next;
+  }
+
+  function readInput() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const P = pressureUnit();
+    const len = (id) => toCanonical(Number(form.elements[id].value), L);
+    const mass = (id) => toCanonical(Number(form.elements[id].value), M);
+    const plain = (id) => Number(form.elements[id].value);
+
+    const built = {
+      wheelbase: len('wheelbase'),
+      totalMass: mass('totalMass'),
+      frontPercent: plain('frontPercent'),
+      cogHeight: len('cogHeight'),
+      decel: plain('decel'),
+      // Parsed from the sidewall form, so a size is entered the way it is
+      // known rather than converted by hand first.
+      tyreFront: parseTyre(form.elements.tyreFront.value),
+      tyreRear: parseTyre(form.elements.tyreRear.value),
+      downforceFront: mass('downforceFront'),
+      downforceRear: mass('downforceRear'),
+      front: {
+        rotorDiameter: len('rotorFront'),
+        padDepth: len('padDepthFront'),
+        padMu: plain('muFront'),
+        pistons: [len('pistonFront1'), len('pistonFront2'), len('pistonFront3')],
+      },
+      rear: {
+        rotorDiameter: len('rotorRear'),
+        padDepth: len('padDepthRear'),
+        padMu: plain('muRear'),
+        pistons: [len('pistonRear1'), len('pistonRear2'), len('pistonRear3')],
+      },
+      pedalRatio: plain('pedalRatio'),
+      targetPedalEffort: mass('targetPedalEffort'),
+      targetPedalTravel: len('targetPedalTravel'),
+      // Blank means the choice is still open; zero tells the model to pick.
+      valveFitted: form.elements.valveFitted.checked,
+      // The knee is entered in whichever pressure unit is on screen.
+      kneePsi: toCanonical(Number(form.elements.kneePsi.value), P) / 6.894757,
+      slope: plain('slope'),
+    };
+    built.radiusFront = built.tyreFront.radius;
+    built.radiusRear = built.tyreRear.radius;
+    return built;
+  }
+
+  function render() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const P = pressureUnit();
+    const len = (v) => formatValue(fromCanonical(v, L), { decimals: L === 'in' ? 2 : 1 });
+    const mass = (v) => formatValue(fromCanonical(v, M), { decimals: 1 });
+    const press = (v) => formatValue(fromCanonical(v, P), { decimals: P === 'bar' ? 1 : 0 });
+    const pct = (v) => formatValue(v, { decimals: 2 });
+
+    try {
+      /* Read inside the try: parsing a tyre size can fail, and a bad size
+         should show the notice like any other invalid input rather than
+         escaping as an uncaught error and leaving stale figures on screen. */
+      const input = readInput();
+      const r = brakeSystem(input);
+
+      const boreLabel = (bore) => {
+        const std = MASTER_CYLINDERS.find((m) => Math.abs(m.bore - bore) < 0.02);
+        return std ? std.label : null;
+      };
+
+      $('boreFront').textContent = r.boreFront === undefined ? '—' : len(r.boreFront);
+      $('boreRear').textContent = r.boreRear === undefined ? '—' : len(r.boreRear);
+      const lf = boreLabel(r.boreFront);
+      const lr = boreLabel(r.boreRear);
+      /* When the hardware itself is the problem, the recommendation box
+         says so rather than presenting the least bad pair as an answer. */
+      const call = verdict(input, r);
+      $('mc-readout').classList.toggle('readout--alert', call.revise);
+
+      const source = call.revise
+        ? 'revise the hardware'
+        : 'recommended';
+      $('boreFront-alt').textContent = `${lf ? lf + ' \u00B7 ' : ''}${source}`;
+      $('boreRear-alt').textContent = lr ?? '';
+
+      const plot = biasPlot({ ...input, boreFront: r.boreFront, boreRear: r.boreRear },
+        { bar: r.biasBar });
+
+      $('frontBias').value = pct(r.frontBias);
+      $('biasBar').value = r.biasBar === undefined ? '—' : pct(r.biasBar);
+      $('coverage').value = plot.inBand
+        ? `${formatValue(plot.inBand.from, { decimals: 2 })}\u2013${formatValue(plot.inBand.to, { decimals: 2 })}`
+        : 'never';
+      const cov = $('coverage-control');
+      cov.classList.remove('field__control--caution', 'field__control--warn');
+      if (!plot.inBand) cov.classList.add('field__control--warn');
+      else if (input.decel < plot.inBand.from || input.decel > plot.inBand.to) {
+        cov.classList.add('field__control--caution');
+      }
+      $('pedalEffort').value = r.pedalEffort === undefined ? '—' : mass(r.pedalEffort);
+      $('pressureFront').value = press(r.pressureFront);
+      $('pressureRear').value = press(r.pressureRear);
+      $('pedalTravel').value = r.pedalTravel === undefined ? '—' : len(r.pedalTravel);
+      // The column carries a mass, so it carries the mass unit.
+      $('pedal-head').textContent = `Pedal, ${M}`;
+
+      /* A bar parked near an end of its travel is the one result that makes
+         a pair a poor choice however good the pedal feels. */
+      const bb = $('biasBar-control');
+      bb.classList.remove('field__control--caution', 'field__control--warn');
+      if (r.biasBar !== undefined && (r.biasBar < 35 || r.biasBar > 65)) bb.classList.add('field__control--warn');
+      else if (r.biasBar !== undefined && (r.biasBar < 42 || r.biasBar > 58)) bb.classList.add('field__control--caution');
+
+      const pe = $('pedalEffort-control');
+      pe.classList.remove('field__control--caution');
+      if (r.pedalEffort !== undefined
+          && Math.abs(r.pedalEffort - input.targetPedalEffort) > input.targetPedalEffort * 0.2) {
+        pe.classList.add('field__control--caution');
+      }
+
+      for (const [id, p] of [['pressureFront-control', r.pressureFront],
+                             ['pressureRear-control', r.pressureRear]]) {
+        const el = $(id);
+        el.classList.remove('field__control--caution', 'field__control--warn');
+        const psi = p / 6.894757;
+        if (psi >= 1000) el.classList.add('field__control--warn');
+        else if (psi >= 800) el.classList.add('field__control--caution');
+      }
+
+      const pt = $('pedalTravel-control');
+      pt.classList.remove('field__control--caution');
+      const wantTravel = input.targetPedalTravel > 0 ? input.targetPedalTravel : 35;
+      if (r.pedalTravel !== undefined
+          && Math.abs(r.pedalTravel - wantTravel) > wantTravel * 0.3) {
+        pt.classList.add('field__control--caution');
+      }
+
+
+      $('option-rows').innerHTML = r.options.map((o) => {
+        const here = Math.abs(o.front.bore - r.boreFront) < 0.02
+          && Math.abs(o.rear.bore - r.boreRear) < 0.02;
+        return `<tr class="table__row${here ? ' table__row--mark' : ''}">
+          <td class="table__cell table__cell--label">${o.front.label}</td>
+          <td class="table__cell table__cell--label">${o.rear.label}</td>
+          <td class="table__cell">${formatValue(o.barNeeded, { decimals: 0 })}%</td>
+          <td class="table__cell">${mass(o.pedalEffort)}</td>
+        </tr>`;
+      }).join('');
+
+      /* Pedal feel is often simply out of reach with the calipers fitted, and
+         the pedal ratio is the lever for it. Worth saying, because otherwise
+         the target looks like a failure of the cylinder choice. */
+      const notes = [];
+      if (r.bestEffort !== undefined && r.bestEffort < input.targetPedalEffort * 0.85) {
+        notes.push(`No standard pair reaches ${mass(input.targetPedalEffort)} ${M} of pedal. `
+          + `${mass(r.bestEffort)} ${M} is the most these brakes will ask for at ${formatValue(input.decel, { decimals: 2 })} G. `
+          + `A pedal ratio nearer ${formatValue(r.ratioForTarget, { decimals: 1 })}:1 would get there, since effort scales inversely with it.`);
+      } else if (r.ratioForTarget !== undefined && Math.abs(r.ratioForTarget - input.pedalRatio) > input.pedalRatio * 0.15) {
+        notes.push(`A pedal ratio nearer ${formatValue(r.ratioForTarget, { decimals: 1 })}:1 would put the effort on your target.`);
+      }
+      if (plot.rearBiased) {
+        notes.push(`Between ${formatValue(plot.rearBiased.from, { decimals: 2 })} and `
+          + `${formatValue(plot.rearBiased.to, { decimals: 2 })} G the delivered bias falls below optimal, `
+          + `which means the rear locks first. The red region in the plot, and the one to stay out of.`);
+      } else if (plot.inBand) {
+        notes.push(`Your hardware sits in the target band from ${formatValue(plot.inBand.from, { decimals: 2 })} to `
+          + `${formatValue(plot.inBand.to, { decimals: 2 })} G, and stays front of optimal everywhere else, `
+          + `which is the safe side to be on.`);
+      }
+      $('feel-note').textContent = notes.join(' ');
+
+      /* Things wrong with the system as specified. Lost when the results
+         panel was rebuilt. The element stayed, nothing filled it, and a
+         hidden empty notice is valid markup so nothing complained. */
+      const list = warnings(input, r);
+      if (call.revise) {
+        list.unshift(call.blocking.length
+          ? `No master cylinder choice fixes this: ${call.blocking.join(', ')}.`
+          : 'Several things are off at once, so the brakes themselves are worth revisiting before choosing cylinders.');
+      }
+      $('warnings').hidden = !list.length;
+      $('warnings').textContent = list.join(' ');
+      $('warnings').classList.toggle('notice--alert', call.revise);
+
+
+      drawDiagram(input, r, plot);
+      renderWorking($('working'), explain(input, r, (v) => formatValue(v, { decimals: 2 })));
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      for (const id of ['boreFront', 'boreRear']) $(id).textContent = '—';
+      for (const id of ['boreFront-alt', 'boreRear-alt', 'feel-note']) $(id).textContent = '';
+      for (const id of [
+                        'frontBias', 'biasBar', 'coverage', 'pedalEffort',
+                        'pressureFront', 'pressureRear', 'pedalTravel']) {
+        $(id).value = '—';
+      }
+      $('warnings').hidden = true;
+      $('warnings').textContent = '';
+      $('mc-readout').classList.remove('readout--alert');
+      $('option-rows').innerHTML = '';
+      $('brake-scene').innerHTML = '';
+      renderWorking($('working'), []);
+    }
+
+    updateSheet(form, { unitLabel: L === 'in' ? 'inch' : 'mm' });
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Front bias against deceleration, with the safe region shaded.
+
+     Red below optimal: the rear locks first, the car spins, and at speed
+     there is no recovery. Green from optimal to seven points front of it:
+     the front locks first, the car runs straight, the driver lifts. Grey
+     above: safe, but the front is doing more work than it needs to. The
+     asymmetry is the whole point, so the target band never sits below the
+     optimal line.
+
+     Two shapes because the box changes shape. In the side column it is tall
+     and narrow; stacked below the results on a tablet it is wide and short.
+     Drawn at a fixed portrait viewBox the stacked case rendered a 444px
+     drawing marooned in a 786px box, with labels no larger than they were
+     at desktop. All the extra width wasted. The viewBox now follows the
+     box it is given. */
+
+  const VIEW_TALL = { w: 340, h: 352 };
+  const VIEW_WIDE = { w: 620, h: 300 };
+
+  function drawDiagram(input, r, plot) {
+    const scene = $('brake-scene');
+    const svg = $('brake-svg');
+    const rows = plot ? plot.rows.filter((q) => !q.beyondLift) : [];
+    if (rows.length < 2) { scene.innerHTML = ''; return; }
+
+    const wide = svg.clientWidth >= 520;
+    const VIEW = wide ? VIEW_WIDE : VIEW_TALL;
+    svg.setAttribute('viewBox', `0 0 ${VIEW.w} ${VIEW.h}`);
+
+    const n = (v) => Number(v.toFixed(2));
+
+    /* Vertical budget, stated rather than guessed:
+         top    26  above the plot, for the design label inside it
+         bottom 14  window bar
+                14  window caption
+                16  deceleration ticks
+                15  axis title
+                13  legend line one
+                13  legend line two
+         and 4 of air at the very bottom. */
+    const left = 42;
+    const right = VIEW.w - 14;
+    const top = 26;
+    const bottom = VIEW.h - 85;
+
+    const xMin = rows[0].decel;
+    const xMax = rows[rows.length - 1].decel;
+    const values = rows.flatMap((q) => [q.optimal, q.targetHigh, q.low, q.high, q.delivered]
+      .filter((v) => v !== undefined));
+    const yMin = Math.max(0, Math.floor((Math.min(...values) - 3) / 5) * 5);
+    const yMax = Math.min(100, Math.ceil((Math.max(...values) + 3) / 5) * 5);
+
+    const x = (d) => left + ((d - xMin) / (xMax - xMin)) * (right - left);
+    const y = (v) => bottom - ((v - yMin) / (yMax - yMin)) * (bottom - top);
+
+    const fwd = (key) => rows.map((q) => `${n(x(q.decel))} ${n(y(q[key]))}`);
+    const back = (key) => [...rows].reverse().map((q) => `${n(x(q.decel))} ${n(y(q[key]))}`);
+    const zone = (cls, lower, upper) =>
+      `<path class="${cls}" d="M ${lower.join(' L ')} L ${upper.join(' L ')} Z"/>`;
+
+    const edgeTop = rows.map((q) => `${n(x(q.decel))} ${top}`);
+    const edgeBottom = [...rows].reverse().map((q) => `${n(x(q.decel))} ${n(bottom)}`);
+
+    const zones = [
+      zone('diagram__zone--danger', fwd('optimal'), edgeBottom),
+      zone('diagram__zone--target', fwd('optimal'), back('targetHigh')),
+      zone('diagram__zone--excess', fwd('targetHigh'), edgeTop.slice().reverse()),
+    ].join('');
+
+    const line = (cls, key) => rows.every((q) => q[key] !== undefined)
+      ? `<path class="${cls}" d="M ${fwd(key).join(' L ')}"/>` : '';
+
+    const ticks = [];
+    for (let v = Math.ceil(yMin / 5) * 5; v <= yMax; v += 5) if (v % 10 === 0) ticks.push(v);
+    const grid = ticks.map((v) => `
+      <text class="diagram__value" x="${left - 5}" y="${n(y(v) + 4)}" text-anchor="end">${v}</text>`).join('');
+
+    /* The bar's reach, labelled at the left where nothing else sits. The
+       design line used to run straight through these at the right. */
+    /* Each label goes to the end where the optimal line is furthest from it:
+       that line climbs left to right, so it clears the upper label on the
+       left and the lower one on the right. */
+    const first = rows[0];
+    const last = rows[rows.length - 1];
+    const edgeLabels = first.high !== undefined && last.low !== undefined ? `
+      <text class="diagram__value" x="${n(left + 4)}" y="${n(y(first.high) - 4)}">bar 65%</text>
+      <text class="diagram__value" x="${n(right - 4)}" y="${n(y(last.low) - 4)}" text-anchor="end">bar 35%</text>` : '';
+
+    const designX = input.decel >= xMin && input.decel <= xMax ? x(input.decel) : undefined;
+    const design = designX === undefined ? '' : `
+      <line class="diagram__crank" x1="${n(designX)}" y1="${top}" x2="${n(designX)}" y2="${n(bottom)}"/>
+      <text class="diagram__value" x="${n(designX - 4)}" y="${n(top + 9)}" text-anchor="end">design ${formatValue(input.decel, { decimals: 2 })}g</text>`;
+
+    const inBand = rows.filter((q) => q.delivered !== undefined
+      && q.delivered >= q.optimal && q.delivered <= q.targetHigh);
+    const window = inBand.length ? `
+      <line class="diagram__coverage" x1="${n(x(inBand[0].decel))}" y1="${n(bottom + 10)}"
+            x2="${n(x(inBand[inBand.length - 1].decel))}" y2="${n(bottom + 10)}"/>
+      <text class="diagram__value" x="${n((x(inBand[0].decel) + x(inBand[inBand.length - 1].decel)) / 2)}" y="${n(bottom + 24)}"
+            text-anchor="middle">on target ${formatValue(inBand[0].decel, { decimals: 2 })}\u2013${formatValue(inBand[inBand.length - 1].decel, { decimals: 2 })} G</text>` : `
+      <text class="diagram__value" x="${n((left + right) / 2)}" y="${n(bottom + 24)}" text-anchor="middle">never on target across this range</text>`;
+
+    /* Ticks skip any that would collide with the axis title beneath them —
+       "1.0" sat directly on "deceleration, g". */
+    const mid = (left + right) / 2;
+    const tickRow = bottom + 40;
+    const xTicks = [xMin, (xMin + xMax) / 2, xMax]
+      .filter((d) => Math.abs(x(d) - mid) > 46)
+      .map((d) => `
+      <text class="diagram__value" x="${n(x(d))}" y="${n(tickRow)}" text-anchor="middle">${formatValue(d, { decimals: 1 })}</text>`).join('');
+
+    scene.innerHTML = `
+      <text class="diagram__label" x="${left - 30}" y="14">front bias, %</text>
+      ${zones}
+      ${grid}
+      ${design}
+      ${line('diagram__envelope', 'low')}
+      ${line('diagram__envelope', 'high')}
+      <path class="diagram__optimal" d="M ${fwd('optimal').join(' L ')}"/>
+      ${line('diagram__delivered', 'delivered')}
+      ${edgeLabels}
+      ${window}
+      ${xTicks}
+      <text class="diagram__value" x="${n(mid)}" y="${n(tickRow)}" text-anchor="middle">deceleration, g</text>
+      <text class="diagram__value" x="${n(mid)}" y="${n(tickRow + 18)}" text-anchor="middle">green = target \u00B7 red = rear locks first</text>
+      <text class="diagram__value" x="${n(mid)}" y="${n(tickRow + 35)}" text-anchor="middle">thick blue = your hardware</text>
+    `;
+  }
+
+  let currentUnit = form.elements.units.value;
+  let currentPressureUnit = form.elements.pressureUnit.value;
+
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    if (event.target.name === 'valveFitted') setValveState();
+    if (event.target.name === 'pressureUnit') {
+      convertUnitFields('pressure', currentPressureUnit, event.target.value);
+      currentPressureUnit = event.target.value;
+      setUnitLabels();
+    }
+    render();
+  });
+  form.addEventListener('input', render);
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  /* The chart picks its shape from the width it is given, so it has to be
+     redrawn when that width changes. */
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(render, 150);
+  });
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = form.elements.units.value;
+  currentPressureUnit = form.elements.pressureUnit.value;
+  setUnitLabels();
+  setValveState();
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

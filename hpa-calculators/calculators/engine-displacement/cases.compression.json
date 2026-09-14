@@ -1,0 +1,196 @@
+{
+  "module": "./formula.js",
+  "export": "compressionRatio",
+  "tolerance": 1e-06,
+  "note": "Deck clearance is an input, not derived from block deck height. The earlier version subtracted one ~216mm figure from another to get a fraction of a millimetre, which amplified any input error by roughly 200x and made results drift away from published figures. Every term here is a product or a sum of same-signed quantities, so there is no subtraction of comparable magnitudes left to lose precision to. deckHeight is derived forward for the diagram and asserted below.",
+  "cases": [
+    {
+      "name": "86x86, 143 rod, 0.5mm deck clearance, 45cc chamber, 87mm gasket bore, IVC 60",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "dishVolume": 0,
+        "gasketThickness": 0.8,
+        "gasketBore": 87,
+        "ivcAbdc": 60,
+        "targetRatio": 10.5
+      },
+      "expect": {
+        "sweptVolume": 499.557214218,
+        "deckVolume": 2.904402408,
+        "gasketVolume": 4.755742959,
+        "clearanceVolume": 52.660145367,
+        "staticRatio": 10.486438192,
+        "deckHeight": 216.5,
+        "pistonAtIvc": 69.433892646,
+        "dynamicRatio": 8.659073617,
+        "impliedChamberVolume": 44.92482455,
+        "ratioDifference": -0.013561808,
+        "ratioPerTenthMmDeck": 0.103500763
+      }
+    },
+    {
+      "name": "Zero deck clearance removes the deck volume entirely",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8,
+        "gasketBore": 87
+      },
+      "expect": {
+        "sweptVolume": 499.557214218,
+        "deckVolume": 0,
+        "gasketVolume": 4.755742959,
+        "clearanceVolume": 49.755742959,
+        "staticRatio": 11.040192036,
+        "deckHeight": 216.0,
+        "ratioPerTenthMmDeck": 0.115862988
+      }
+    },
+    {
+      "name": "Crown proud of the deck: negative clearance is legal and lowers Vc",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": -0.3,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8,
+        "gasketBore": 87
+      },
+      "expect": {
+        "sweptVolume": 499.557214218,
+        "deckVolume": -1.742641445,
+        "gasketVolume": 4.755742959,
+        "clearanceVolume": 48.013101514,
+        "staticRatio": 11.404602045,
+        "deckHeight": 215.7,
+        "ratioPerTenthMmDeck": 0.124374048
+      }
+    },
+    {
+      "name": "A domed piston removes clearance volume and raises the ratio",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "dishVolume": -5,
+        "gasketThickness": 0.8,
+        "gasketBore": 87,
+        "ivcAbdc": 60
+      },
+      "expect": {
+        "sweptVolume": 499.557214218,
+        "deckVolume": 2.904402408,
+        "gasketVolume": 4.755742959,
+        "clearanceVolume": 47.660145367,
+        "staticRatio": 11.481655278,
+        "deckHeight": 216.5,
+        "pistonAtIvc": 69.433892646,
+        "dynamicRatio": 9.462582875,
+        "ratioPerTenthMmDeck": 0.126211847
+      }
+    },
+    {
+      "name": "Gasket bore defaults to the cylinder bore when omitted",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8
+      },
+      "expect": {
+        "gasketVolume": 4.647043853
+      }
+    },
+    {
+      "name": "Clearance volume driven to zero is rejected rather than dividing",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "dishVolume": -60,
+        "gasketThickness": 0.8
+      },
+      "expectError": true
+    },
+    {
+      "name": "Missing deck clearance is rejected rather than assumed zero",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8
+      },
+      "expectError": true
+    },
+    {
+      "name": "Rod length does not affect the static ratio",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 200,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8,
+        "gasketBore": 87
+      },
+      "expect": {
+        "staticRatio": 10.486438192
+      }
+    },
+    {
+      "name": "Compression height does not affect the static ratio",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 41,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8,
+        "gasketBore": 87
+      },
+      "expect": {
+        "staticRatio": 10.486438192
+      }
+    },
+    {
+      "name": "Deck height is derived forward and stays exact",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckClearance": 0.5,
+        "chamberVolume": 45,
+        "gasketThickness": 0.8,
+        "gasketBore": 87
+      },
+      "expect": {
+        "deckHeight": 216.5
+      }
+    }
+  ]
+}

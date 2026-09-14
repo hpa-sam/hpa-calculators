@@ -1,0 +1,109 @@
+{
+  "module": "./formula.js",
+  "export": "currentFrequency",
+  "tolerance": 1e-07,
+  "note": "The reverse direction: what ride frequency the spring already fitted gives. A target frequency is hard to judge on its own, so this closes the loop. The round-trip case is the important one - feeding a target rate back in must return the target frequency, which proves the two directions agree.",
+  "cases": [
+    {
+      "name": "80 N/mm front and 60 N/mm rear against a 2.0 Hz target",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2,
+        "currentSpringFront": 80,
+        "currentSpringRear": 60
+      },
+      "expect": {
+        "currentFront": {
+          "springRate": 80,
+          "wheelRate": 75.407672731,
+          "frequency": 2.834204002,
+          "change": 0.834204002,
+          "rateFactor": 0.497963806
+        },
+        "currentRear": {
+          "springRate": 60,
+          "wheelRate": 27.025809648,
+          "frequency": 1.826460264,
+          "change": -0.173539736,
+          "rateFactor": 1.199056188
+        }
+      }
+    },
+    {
+      "name": "Round trip: the target rate returns the target frequency",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2,
+        "currentSpringFront": 39.837104452,
+        "currentSpringRear": 71.943371307
+      },
+      "expect": {
+        "currentFront": {
+          "frequency": 2,
+          "change": 0,
+          "rateFactor": 1
+        },
+        "currentRear": {
+          "frequency": 2,
+          "change": 0,
+          "rateFactor": 1
+        }
+      }
+    },
+    {
+      "name": "Frequency goes as the square root of rate: four times the spring doubles it",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2,
+        "currentSpringFront": 159.348417808,
+        "currentSpringRear": 60
+      },
+      "expect": {
+        "currentFront": {
+          "frequency": 4
+        }
+      }
+    },
+    {
+      "name": "Target rates are unaffected by what is currently fitted",
+      "input": {
+        "totalMass": 1086,
+        "frontPercent": 53,
+        "unsprungFront": 50,
+        "unsprungRear": 50,
+        "motionRatioFront": 1.03,
+        "motionRatioRear": 1.49,
+        "frequencyFront": 2,
+        "frequencyRear": 2,
+        "currentSpringFront": 80,
+        "currentSpringRear": 60
+      },
+      "expect": {
+        "front": {
+          "springRate": 39.837104452
+        },
+        "rear": {
+          "springRate": 71.943371307
+        }
+      }
+    }
+  ]
+}

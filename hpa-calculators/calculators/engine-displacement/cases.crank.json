@@ -1,0 +1,82 @@
+{
+  "module": "./formula.js",
+  "export": "crankGeometry",
+  "tolerance": 1e-07,
+  "note": "The two boundary conditions are what make this trustworthy: at 0 degrees the piston sits at TDC having travelled nothing, and at exactly 180 degrees it has travelled exactly one stroke, regardless of rod length. If either drifts, the animated diagram and the compression maths are both wrong.",
+  "cases": [
+    {
+      "name": "At TDC the piston has travelled nothing",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckHeight": 216.5,
+        "angle": 0
+      },
+      "expect": {
+        "pistonFromTdc": 0,
+        "pinHeight": 186,
+        "crownHeight": 216,
+        "crownToDeck": 0.5,
+        "rodAngle": 0
+      }
+    },
+    {
+      "name": "At BDC the piston has travelled exactly one stroke",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckHeight": 216.5,
+        "angle": 180
+      },
+      "expect": {
+        "pistonFromTdc": 86,
+        "pinHeight": 100,
+        "crownHeight": 130,
+        "rodAngle": 0
+      }
+    },
+    {
+      "name": "Stroke travel is independent of rod length",
+      "input": {
+        "stroke": 86,
+        "rodLength": 200,
+        "compHeight": 30,
+        "deckHeight": 273.5,
+        "angle": 180
+      },
+      "expect": {
+        "pistonFromTdc": 86
+      }
+    },
+    {
+      "name": "Rod swings hardest at 90 degrees",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "compHeight": 30,
+        "deckHeight": 216.5,
+        "angle": 90
+      },
+      "expect": {
+        "pistonFromTdc": 49.61818303,
+        "pinHeight": 136.38181697,
+        "crownHeight": 166.38181697,
+        "crownToDeck": 50.11818303,
+        "rodAngle": 17.499609576
+      }
+    },
+    {
+      "name": "Rod shorter than the crank throw is rejected",
+      "input": {
+        "stroke": 200,
+        "rodLength": 90,
+        "compHeight": 30,
+        "deckHeight": 200,
+        "angle": 0
+      },
+      "expectError": true
+    }
+  ]
+}

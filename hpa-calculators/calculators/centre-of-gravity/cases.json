@@ -1,0 +1,89 @@
+{
+  "module": "./formula.js",
+  "export": "weightDistribution",
+  "tolerance": 1e-07,
+  "note": "Distribution figures reproduce CoG_Calculator_-_Grid.xlsx exactly: the sheet gives 55.38181818 percent front and 47.85454545 percent left for these corner weights, and 1150.257mm behind the front axle. No lift is needed for any of this.",
+  "cases": [
+    {
+      "name": "Sheet default corner weights",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540
+      },
+      "expect": {
+        "total": 1375.0,
+        "frontRatio": 0.553818182,
+        "leftRatio": 0.478545455,
+        "cgFromFrontAxle": 1150.256727273,
+        "cgLateralOffset": 32.825454545,
+        "crossWeight": 0.474545455
+      }
+    },
+    {
+      "name": "Perfectly square car sits on the centreline",
+      "input": {
+        "frontLeft": 300,
+        "frontRight": 300,
+        "rearLeft": 300,
+        "rearRight": 300,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540
+      },
+      "expect": {
+        "frontRatio": 0.5,
+        "leftRatio": 0.5,
+        "cgLateralOffset": 0,
+        "crossWeight": 0.5,
+        "cgFromFrontAxle": 1289.0
+      }
+    },
+    {
+      "name": "All weight on the front axle puts the CoG at the front axle",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 0,
+        "rearRight": 0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540
+      },
+      "expect": {
+        "frontRatio": 1,
+        "cgFromFrontAxle": 0
+      }
+    },
+    {
+      "name": "A missing corner weight is rejected rather than treated as zero",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": null,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540
+      },
+      "expectError": true
+    },
+    {
+      "name": "Zero total weight is rejected rather than dividing",
+      "input": {
+        "frontLeft": 0,
+        "frontRight": 0,
+        "rearLeft": 0,
+        "rearRight": 0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540
+      },
+      "expectError": true
+    }
+  ]
+}

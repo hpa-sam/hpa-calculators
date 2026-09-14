@@ -1,0 +1,123 @@
+{
+  "module": "./formula.js",
+  "export": "cgHeight",
+  "tolerance": 1e-06,
+  "note": "The height formula is exact for a rigid car and uses the LEVEL wheelbase; the lift-angle terms cancel when moments are taken about the front contact patch. Verified independently by exact moment balance: a car with a known 500mm CoG returns 500mm at 10, 20.2 and 30 degrees of lift. Sensitivity is asserted too, because it is the figure that decides whether a measurement was worth taking.",
+  "cases": [
+    {
+      "name": "890mm lift, 655kg on the rear axle",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 890,
+        "raisedAxle": "front",
+        "liftedGroundWeight": 655
+      },
+      "expect": {
+        "liftAngle": 20.195766828,
+        "groundAxleLevel": 613.5,
+        "weightTransferred": 41.5,
+        "height": 531.526152735,
+        "mmPerKg": 5.097015729
+      }
+    },
+    {
+      "name": "Halving the lift doubles the cost of a scale error",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 445,
+        "raisedAxle": "front",
+        "liftedGroundWeight": 655
+      },
+      "expect": {
+        "mmPerKg": 10.698791037
+      }
+    },
+    {
+      "name": "No weight transfer means the CoG is at axle height",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 890,
+        "raisedAxle": "front",
+        "liftedGroundWeight": 613.5
+      },
+      "expect": {
+        "weightTransferred": 0,
+        "height": 320
+      }
+    },
+    {
+      "name": "Weight moving the wrong way is flagged, not silently used",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 890,
+        "raisedAxle": "front",
+        "liftedGroundWeight": 600
+      },
+      "expect": {
+        "transferLooksWrong": true
+      }
+    },
+    {
+      "name": "Lift height beyond the wheelbase is rejected",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 3000,
+        "raisedAxle": "front",
+        "liftedGroundWeight": 655
+      },
+      "expectError": true
+    },
+    {
+      "name": "Naming no axle is rejected",
+      "input": {
+        "frontLeft": 348.5,
+        "frontRight": 413.0,
+        "rearLeft": 309.5,
+        "rearRight": 304.0,
+        "wheelbase": 2578,
+        "trackFront": 1520,
+        "trackRear": 1540,
+        "tyreRadius": 320,
+        "liftHeight": 890,
+        "raisedAxle": "",
+        "liftedGroundWeight": 655
+      },
+      "expectError": true
+    }
+  ]
+}

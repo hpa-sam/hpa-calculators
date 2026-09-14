@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spring Rate from Ride Frequency | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Spring Rate from Ride Frequency</h2>
+      <p class="sheet__intro">Front and rear spring rates for a target ride frequency, from corner weights and motion ratios.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Spring Rate from Ride Frequency</h1>
+      <p class="calc__intro">
+        The spring rates that put each end of the car at a chosen ride
+        frequency, and what a range of frequency targets would need.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Circuit. 2.2 Hz front">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input vehicle data</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+            <span class="unit-switch__label">kg</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+            <span class="unit-switch__label">lb</span>
+          </label>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups">
+          <div class="group">
+            <h2 class="group__title">Mass</h2>
+
+            <div class="field">
+              <label class="field__label" for="totalMass">Total mass
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="As weighed, with the driver and the fuel load you are setting up for. Both change the answer.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="totalMass" name="totalMass"
+                       value="1086" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="frontPercent">On the front axle
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="From corner weights. Most front-engined rear-drive cars land between 52 and 58 percent.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="frontPercent" name="frontPercent"
+                       value="53" step="0.1" min="0" max="100" inputmode="decimal">
+                <span class="field__unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungFront">Unsprung, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Per corner, not per axle: wheel, tyre, hub, brake and about half the arms. Typically 30 to 50 kg on a car, more with big brakes.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungFront" name="unsprungFront"
+                       value="50" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungRear">Unsprung, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungRear" name="unsprungRear"
+                       value="50" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Motion ratio</h2>
+
+            <div class="field">
+              <label class="field__label" for="motionRatioFront">Front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Wheel travel divided by spring travel, so 1.0 or more for almost any suspension. Measure it through the travel, not just at ride height. It changes as the suspension moves.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="motionRatioFront" name="motionRatioFront"
+                       value="1.03" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="motionRatioRear">Rear
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="An inboard spring or rocker gives a high ratio. Rate goes as the square of this, so 1.5 needs a spring more than twice the wheel rate.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="motionRatioRear" name="motionRatioRear"
+                       value="1.49" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Sprung mass, front corner</label>
+              <div class="field__control field__control--locked">
+                <input class="input input--locked" id="sprungFront" readonly tabindex="-1" value="—">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Sprung mass, rear corner</label>
+              <div class="field__control field__control--locked">
+                <input class="input input--locked" id="sprungRear" readonly tabindex="-1" value="—">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Target ride frequency</h2>
+
+            <div class="field">
+              <label class="field__label" for="frequencyFront">Front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Road cars 1.0 to 1.5 Hz, fast road 1.5 to 2.0, race without aero 2.0 to 2.5, downforce cars 3.0 and up. Rate goes as the square, so 0.1 Hz is worth about 10 percent.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="frequencyFront" name="frequencyFront"
+                       value="2.0" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit">Hz</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="frequencyRear">Rear
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="The front wheels meet a bump first, so the two ends start moving out of step. If the rear answers at the same rate it stays out of step and the car see-saws, each end feeding the other. A rear 5 to 20 percent stiffer catches up in phase, and the pitching dies away within a bump or two instead of building. Downforce cars often invert it, trading that for a steadier aero platform.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="frequencyRear" name="frequencyRear"
+                       value="2.0" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit">Hz</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="currentSpringFront">Spring fitted now, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Optional. The rate on the car today, so the calculator can tell you the frequency you are starting from and how big a change the target really is. Leave blank to skip.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="currentSpringFront" name="currentSpringFront"
+                       value="" step="1" min="0" inputmode="decimal" placeholder="optional">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="currentSpringRear">Spring fitted now, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="currentSpringRear" name="currentSpringRear"
+                       value="" step="1" min="0" inputmode="decimal" placeholder="optional">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">
+        <span>Results</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="N/mm" checked>
+            <span class="unit-switch__label">N/mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="kg/mm">
+            <span class="unit-switch__label">kg/mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="lb/in">
+            <span class="unit-switch__label">lb/in</span>
+          </label>
+        </span>
+      </div>
+      <div class="section__body">
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Front spring rate</p>
+                <p class="readout__figure">
+                  <span id="springFront">—</span>
+                  <span class="readout__unit" data-unit="rate">N/mm</span>
+                </p>
+                <p class="readout__alt" id="springFront-alt"></p>
+              </div>
+              <div class="readout__body">
+                <p class="readout__label">Rear spring rate</p>
+                <p class="readout__figure">
+                  <span id="springRear">—</span>
+                  <span class="readout__unit" data-unit="rate">N/mm</span>
+                </p>
+                <p class="readout__alt" id="springRear-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced">
+              <div class="group">
+                <h2 class="group__title">Rates and where you are now</h2>
+
+                <div class="field">
+                  <label class="field__label">Front wheel rate
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Rate measured at the contact patch. This is what the car actually feels; spring rate is what you buy.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="wheelFront" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="rate">N/mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Rear wheel rate</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="wheelRear" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="rate">N/mm</span>
+                  </div>
+                </div>
+
+                <div class="field" id="currentFront-field" hidden>
+                  <label class="field__label">Front, fitted now
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="The ride frequency the spring currently on the car is giving, against your target. Frequency goes as the square root of rate, so a 10 percent change in frequency needs roughly 21 percent of spring.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked" id="currentFront-control">
+                    <input class="input input--locked" id="currentFront" readonly tabindex="-1" value="—">
+                    <span class="field__unit">Hz</span>
+                  </div>
+                </div>
+
+                <div class="field" id="currentRear-field" hidden>
+                  <label class="field__label">Rear, fitted now</label>
+                  <div class="field__control field__control--locked" id="currentRear-control">
+                    <input class="input input--locked" id="currentRear" readonly tabindex="-1" value="—">
+                    <span class="field__unit">Hz</span>
+                  </div>
+                </div>
+
+                <p class="group__note" id="current-note"></p>
+                <p class="group__note" id="split-note"></p>
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">Rate at other targets
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="Both ends set to the same frequency, so you can see what a different target would cost. Your current front target is highlighted.">?</button>
+                </h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="table__head table__head--label">Hz</th>
+                        <th class="table__head">Front</th>
+                        <th class="table__head">Rear</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sweep-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="mr-svg" viewBox="0 0 340 300"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="mr-desc">
+                <desc id="mr-desc">Suspension arm seen from the front of the car, showing where the spring mounts for the entered motion ratio, front and rear in turn.</desc>
+                <g id="mr-scene"></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Ride frequency is the undamped natural frequency of one corner on its spring. Dampers and tyre stiffness are not included, so the real car sits a little above these figures.</li>
+      <li>Unsprung mass is per corner, not per axle.</li>
+      <li>Motion ratio is wheel travel divided by spring travel, taken as constant. On most suspensions it changes through the travel.</li>
+      <li>Each axle is treated as symmetrical, at half the axle mass per corner. Use corner weights directly if your car is not.</li>
+      <li>Spring rate is the spring alone. Anti-roll bars, bump rubbers and helper springs all add to the rate the wheel sees.</li>
+      <li>Tyre vertical stiffness is in series with the spring and is ignored. It matters most at high frequencies.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    springRate, frequencySweep, explain, currentFrequency, explainCurrent,
+  } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+    convertRateFields, otherRateUnits,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const massUnit = () => (form.elements.units.value === 'imperial' ? 'lb' : 'kg');
+
+  /* Spring rate has its own unit control rather than following the
+     metric/imperial switch. Springs are sold in all three: N/mm by European
+     makers, kgf/mm by Japanese and most coilover suppliers, lb/in in the US.
+     Two of those are metric, so the system switch cannot express the choice. */
+  const stiffUnit = () => form.elements.rateUnit.value;
+
+  function setUnitLabels() {
+    const imperial = form.elements.units.value === 'imperial';
+    for (const el of document.querySelectorAll('[data-unit="mass"]')) {
+      el.textContent = imperial ? 'lb' : 'kg';
+    }
+    for (const el of document.querySelectorAll('[data-unit="rate"]')) {
+      el.textContent = stiffUnit();
+    }
+  }
+
+  function onUnitChange(previous) {
+    const next = form.elements.units.value;
+    if (next === previous) return next;
+    convertEditableFields(previous, next);
+    setUnitLabels();
+    return next;
+  }
+
+  function readInput() {
+    const M = massUnit();
+    const mass = (id) => toCanonical(Number(form.elements[id].value), M);
+    const plain = (id) => Number(form.elements[id].value);
+    // Blank means "not fitted / don't compare", which is not the same as zero.
+    const rateOrZero = (id) => {
+      const raw = form.elements[id].value;
+      return raw === '' ? 0 : toCanonical(Number(raw), stiffUnit());
+    };
+    return {
+      totalMass: mass('totalMass'),
+      frontPercent: plain('frontPercent'),
+      unsprungFront: mass('unsprungFront'),
+      unsprungRear: mass('unsprungRear'),
+      motionRatioFront: plain('motionRatioFront'),
+      motionRatioRear: plain('motionRatioRear'),
+      currentSpringFront: rateOrZero('currentSpringFront'),
+      currentSpringRear: rateOrZero('currentSpringRear'),
+      frequencyFront: plain('frequencyFront'),
+      frequencyRear: plain('frequencyRear'),
+    };
+  }
+
+  function render() {
+    const M = massUnit();
+    const S = stiffUnit();
+    const input = readInput();
+    const mass = (v) => formatValue(fromCanonical(v, M), { decimals: 1 });
+    const rate = (v) => formatValue(fromCanonical(v, S), { decimals: S === 'lb/in' ? 1 : 2 });
+
+    try {
+      const r = currentFrequency(input);
+
+      $('springFront').textContent = rate(r.front.springRate);
+      $('springRear').textContent = rate(r.rear.springRate);
+      // The other two units always visible. See otherRateUnits in units.js.
+      $('springFront-alt').textContent = otherRateUnits(r.front.springRate, S);
+      $('springRear-alt').textContent = otherRateUnits(r.rear.springRate, S);
+
+      $('wheelFront').value = rate(r.front.wheelRate);
+      $('wheelRear').value = rate(r.rear.wheelRate);
+      $('sprungFront').value = mass(r.front.sprungMass);
+      $('sprungRear').value = mass(r.rear.sprungMass);
+
+      /* The split is no longer shown as a figure. It is the two targets
+         above divided by each other, but what it means is still worth
+         saying. */
+      const split = r.frequencySplit;
+      $('split-note').textContent = split > 1.001
+        ? `The rear is ${formatValue((split - 1) * 100, { decimals: 0 })}% stiffer in frequency than the front, so the rear catches the front in phase over a bump and the pitching settles.`
+        : split < 0.999
+          ? `The front is ${formatValue((1 / split - 1) * 100, { decimals: 0 })}% stiffer in frequency than the rear. Deliberate on some downforce cars, unusual otherwise.`
+          : 'Both ends are set to the same frequency, so the two will stay out of step over a bump and the car will see-saw.';
+
+      /* What the springs on the car are giving, when they have been entered.
+         A target of 2.0 Hz means little until you know you are at 1.6. */
+      for (const [side, key] of [['Front', 'currentFront'], ['Rear', 'currentRear']]) {
+        const cur = r[key];
+        const field = $(`${key}-field`);
+        field.hidden = !cur;
+        if (!cur) continue;
+        $(key).value = formatValue(cur.frequency, { decimals: 2 });
+        const ctl = $(`${key}-control`);
+        ctl.classList.remove('field__control--caution');
+        if (Math.abs(cur.change) > 0.15) ctl.classList.add('field__control--caution');
+      }
+
+      const notes = [];
+      for (const [side, key, target] of [['front', 'currentFront', input.frequencyFront],
+                                         ['rear', 'currentRear', input.frequencyRear]]) {
+        const cur = r[key];
+        if (!cur) continue;
+        notes.push(Math.abs(cur.change) < 0.02
+          ? `The ${side} is already on target.`
+          : `The ${side} sits at ${formatValue(cur.frequency, { decimals: 2 })} Hz against `
+            + `${formatValue(target, { decimals: 2 })} Hz, so the target needs about `
+            + `${formatValue(Math.abs(cur.rateFactor - 1) * 100, { decimals: 0 })}% `
+            + `${cur.rateFactor > 1 ? 'more' : 'less'} spring, `
+            + `${rate(cur.springRate)} to ${rate(key === 'currentFront' ? r.front.springRate : r.rear.springRate)} ${S}.`);
+      }
+      $('current-note').textContent = notes.join(' ');
+
+      const sweep = frequencySweep(input);
+      $('sweep-rows').innerHTML = sweep.map((row) => `
+        <tr class="table__row${row.current ? ' table__row--mark' : ''}">
+          <td class="table__cell table__cell--label">${formatValue(row.frequency, { decimals: 2 })}</td>
+          <td class="table__cell">${rate(row.front)}</td>
+          <td class="table__cell">${rate(row.rear)}</td>
+        </tr>`).join('');
+
+      drawDiagram(input, r);
+      const fmt = (v) => formatValue(v, { decimals: 2 });
+      renderWorking($('working'),
+        explain(input, r, fmt).concat(explainCurrent(input, r, fmt)));
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      for (const id of ['springFront', 'springRear']) $(id).textContent = '—';
+      for (const id of ['springFront-alt', 'springRear-alt', 'split-note']) $(id).textContent = '';
+      for (const id of ['wheelFront', 'wheelRear',
+                        'sprungFront', 'sprungRear']) {
+        $(id).value = '—';
+      }
+      $('sweep-rows').innerHTML = '';
+      for (const k of ['currentFront', 'currentRear']) {
+        $(`${k}-field`).hidden = true;
+        $(k).value = '—';
+      }
+      $('current-note').textContent = '';
+      $('mr-scene').innerHTML = '';
+      renderWorking($('working'), []);
+    }
+
+    updateSheet(form, { unitLabel: M === 'lb' ? 'lb' : 'kg' });
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Where the spring mounts on the arm, for each end, seen from the front of
+     the car. Motion ratio is the input the rate is most sensitive to and the
+     one people get wrong most, so showing it as geometry is worth more than
+     restating the answer: a ratio of 1.49 puts the spring two thirds of the
+     way out, and the picture makes that immediate.
+
+     The arm runs across the car, so looking along it the tyre is a section —
+     a rectangle standing on the ground with the grooves running across it,
+     not a circle. A circle here implied a side view, in which the arm would
+     be pointing at the viewer.
+
+     Illustrative: the calculator takes the ratio as a number, so this shows
+     what that number implies rather than measuring a real linkage.
+
+     Layout budget is stated, not guessed. Two diagrams shipped with labels
+     outside the viewBox from skipping this. */
+
+  const VIEW = { w: 340, h: 300 };
+
+  function drawDiagram(input, r) {
+    const scene = $('mr-scene');
+    const n = (v) => Number(v.toFixed(2));
+
+    const pivotX = 60;
+    const armLen = 196;
+    const tyreW = 24;
+    const tyreH = 52;
+
+    const rows = [
+      { y: 84, label: 'front', ratio: input.motionRatioFront },
+      { y: 210, label: 'rear', ratio: input.motionRatioRear },
+    ];
+
+    scene.innerHTML = rows.map(({ y, label, ratio }) => {
+      // the spring sits 1/ratio along the arm: wheel travel / spring travel
+      const frac = Math.min(1, 1 / Math.max(ratio, 0.001));
+      const springX = pivotX + armLen * frac;
+      const hubX = pivotX + armLen;
+      const groundY = y + tyreH / 2;
+      const springTop = y - 42;
+
+      // zigzag coil, four turns
+      const coil = [];
+      const turns = 4;
+      for (let i = 0; i <= turns * 2; i++) {
+        const t = i / (turns * 2);
+        const yy = y - 8 - (y - 8 - springTop) * t;
+        const xx = springX + (i === 0 || i === turns * 2 ? 0 : (i % 2 ? 6 : -6));
+        coil.push(`${i ? 'L' : 'M'} ${n(xx)} ${n(yy)}`);
+      }
+
+      const tread = [-6, 0, 6].map((off) =>
+        `<line class="diagram__tread" x1="${n(hubX + off)}" y1="${n(y - tyreH / 2 + 5)}"
+               x2="${n(hubX + off)}" y2="${n(groundY - 5)}"/>`).join('');
+
+      return `
+        <text class="diagram__label" x="12" y="${n(y - 52)}">${label}</text>
+
+        <!-- ground -->
+        <line class="diagram__axis" x1="${n(pivotX - 12)}" y1="${n(groundY)}"
+              x2="${n(hubX + tyreW / 2 + 14)}" y2="${n(groundY)}"/>
+
+        <!-- chassis pivot -->
+        <line class="diagram__outline" x1="${pivotX}" y1="${n(y - 34)}" x2="${pivotX}" y2="${n(y + 20)}"/>
+        <circle class="diagram__hub" cx="${pivotX}" cy="${n(y)}" r="4"/>
+
+        <!-- arm out to the hub -->
+        <line class="diagram__outline diagram__outline--heavy" x1="${pivotX}" y1="${n(y)}"
+              x2="${n(hubX)}" y2="${n(y)}"/>
+
+        <!-- tyre in section, standing on the ground -->
+        <rect class="diagram__tyre" x="${n(hubX - tyreW / 2)}" y="${n(y - tyreH / 2)}"
+              width="${tyreW}" height="${tyreH}" rx="4"/>
+        ${tread}
+
+        <!-- spring at the position the ratio implies -->
+        <path class="diagram__spring" d="${coil.join(' ')}"/>
+        <line class="diagram__spring" x1="${n(springX)}" y1="${n(y - 8)}" x2="${n(springX)}" y2="${n(y)}"/>
+        <circle class="diagram__cog" cx="${n(springX)}" cy="${n(y)}" r="4"/>
+        <text class="diagram__value" x="${n(springX)}" y="${n(y - 52)}" text-anchor="middle">${formatValue(ratio, { decimals: 2 })}:1</text>
+
+        <!-- how far along the arm that is -->
+        <g class="diagram__dim">
+          <line x1="${pivotX}" y1="${n(groundY + 14)}" x2="${n(springX)}" y2="${n(groundY + 14)}"/>
+          <line x1="${pivotX}" y1="${n(groundY + 10)}" x2="${pivotX}" y2="${n(groundY + 18)}"/>
+          <line x1="${n(springX)}" y1="${n(groundY + 10)}" x2="${n(springX)}" y2="${n(groundY + 18)}"/>
+        </g>
+        <text class="diagram__value" x="${n((pivotX + springX) / 2)}" y="${n(groundY + 30)}"
+              text-anchor="middle">${formatValue(frac * 100, { decimals: 0 })}% along the arm</text>`;
+    }).join('') + `
+      <text class="diagram__value" x="${n(VIEW.w / 2)}" y="${n(VIEW.h - 8)}" text-anchor="middle">seen from the front of the car</text>`;
+  }
+
+  let currentUnit = form.elements.units.value;
+  let currentRateUnit = form.elements.rateUnit.value;
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    if (event.target.name === 'rateUnit') {
+      convertRateFields(currentRateUnit, event.target.value);
+      currentRateUnit = event.target.value;
+      setUnitLabels();
+    }
+    render();
+  });
+  form.addEventListener('input', render);
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = form.elements.units.value;
+  setUnitLabels();
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

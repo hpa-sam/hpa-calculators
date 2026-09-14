@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anti-Roll Bar Stiffness Calculator | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Anti-Roll Bar Stiffness Calculator</h2>
+      <p class="sheet__intro">Wheel-rate stiffness of a U-bar, and what each adjustment hole gives you.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Anti-Roll Bar Stiffness Calculator</h1>
+      <p class="calc__intro">
+        Stiffness at the lever arm tip for a U-shaped anti-roll bar, from the
+        bar and arm dimensions, plus the rate at each adjustment hole.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Front bar. Wet setting">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input bar data</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+            <span class="unit-switch__label">mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+            <span class="unit-switch__label">inch</span>
+          </label>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups">
+          <div class="group">
+            <h2 class="group__title">Torsion bar</h2>
+
+            <div class="field">
+              <label class="field__label" for="barLength">Length
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="The twisting span between the two arm bends, not the overall bar. Longer is softer, in direct proportion.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="barLength" name="barLength"
+                       value="1200" step="5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="barDiameter">Outside diameter
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Measure it with a vernier. Stiffness goes as diameter to the fourth power, so 1mm here is worth more than changing material.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="barDiameter" name="barDiameter"
+                       value="24.5" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="barWall">Wall thickness
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Enter 0 for a solid bar. The wall sits on both sides of the bore, so the bore is the diameter less twice this figure.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="barWall" name="barWall"
+                       value="3" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="barMaterial">Material
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Chromoly is stronger than mild steel but barely stiffer. Expect under 3% change in rate, not the large gain most people assume.">?</button>
+              </label>
+              <div class="field__control">
+                <select class="select" id="barMaterial" name="barMaterial">
+                  <option value="steel" selected>Steel</option>
+                  <option value="chromoly">Chromoly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Lever arms</h2>
+
+            <div class="field">
+              <label class="field__label" for="armLength">Effective length
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Bar centreline to the drop-link hole in use. This is the longest, softest setting. Adjustment holes move inboard from here.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="armLength" name="armLength"
+                       value="300" step="5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="armDiameter">Outside diameter</label>
+              <div class="field__control">
+                <input class="input" type="number" id="armDiameter" name="armDiameter"
+                       value="24.5" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="armWall">Wall thickness
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Enter 0 for solid arms. Blade-type arms are not covered. This assumes round section.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="armWall" name="armWall"
+                       value="3" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="armMaterial">Material</label>
+              <div class="field__control">
+                <select class="select" id="armMaterial" name="armMaterial">
+                  <option value="steel" selected>Steel</option>
+                  <option value="chromoly">Chromoly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Adjustment</h2>
+
+            <div class="field">
+              <label class="field__label" for="adjustPositions">Holes per arm
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Counting the longest setting as the first. Leave at 1 for a fixed bar.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="adjustPositions" name="adjustPositions"
+                       value="3" step="1" min="1" max="12" inputmode="numeric">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="adjustSpacing">Hole spacing
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Centre to centre between adjacent holes. Each step inboard shortens the arm and stiffens the bar.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="adjustSpacing" name="adjustSpacing"
+                       value="20" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Bore, torsion bar</label>
+              <div class="field__control field__control--locked">
+                <input class="input input--locked" id="barInnerDiameter" readonly tabindex="-1" value="—">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Bore, lever arms</label>
+              <div class="field__control field__control--locked">
+                <input class="input input--locked" id="armInnerDiameter" readonly tabindex="-1" value="—">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">
+        <span>Results</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="N/mm" checked>
+            <span class="unit-switch__label">N/mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="kg/mm">
+            <span class="unit-switch__label">kg/mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="rateUnit" value="lb/in">
+            <span class="unit-switch__label">lb/in</span>
+          </label>
+        </span>
+      </div>
+      <div class="section__body">
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Anti-roll bar stiffness, at the arm tip</p>
+                <p class="readout__figure">
+                  <span id="stiffness">—</span>
+                  <span class="readout__unit" data-unit="rate">N/mm</span>
+                </p>
+                <p class="readout__alt" id="stiffness-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced">
+              <div class="group">
+                <h2 class="group__title">Where the give is</h2>
+
+                <div class="field">
+                  <label class="field__label">Torsion bar alone</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="barStiffness" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="rate">N/mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">One lever arm alone</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="armStiffness" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="rate">N/mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Bar's share of the give
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Compliances add, so the softest part governs. Above about 75% here, only the bar is worth changing; near 50% the arms matter too.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="share-control">
+                    <input class="input input--result" id="barShare" readonly tabindex="-1" value="—">
+                    <span class="field__unit">%</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Per 1 mm of bar diameter
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Section goes as diameter to the fourth power, so this is always large. It is why bar diameter must be measured rather than taken from a catalogue.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked">
+                    <input class="input input--locked" id="perMm" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="rate">N/mm</span>
+                  </div>
+                </div>
+
+                <p class="group__note" id="dominance-note"></p>
+              </div>
+
+              <div class="group" id="positions-group">
+                <h2 class="group__title">Stiffness at each hole
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="Effective arm length at each setting and the rate it gives. The first row is the longest, softest hole.">?</button>
+                </h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="table__head table__head--label">Hole</th>
+                        <th class="table__head">Arm</th>
+                        <th class="table__head">Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody id="positions-rows"></tbody>
+                  </table>
+                </div>
+                <p class="group__note" id="range-note"></p>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="arb-svg" viewBox="0 0 340 220"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="arb-desc">
+                <desc id="arb-desc">Plan view of the U-shaped anti-roll bar showing the torsion bar span, the lever arms and the adjustment holes, with tube sections drawn to scale.</desc>
+                <g id="arb-scene"></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>A U-shaped bar of round section, with two straight lever arms in bending and a straight torsion bar between them. Blade-type and splined-lever bars are not covered.</li>
+      <li>Bushing and drop-link compliance are ignored. On a road car they can be a large share of the real rate.</li>
+      <li>Stiffness is at the lever arm tip. Turning it into roll stiffness needs track width and the drop-link motion ratio.</li>
+      <li>Bends are treated as sharp corners, so a real bar is slightly softer than this.</li>
+      <li>Steel is taken as E = 200 GPa and G = 78 GPa, chromoly as 205 and 80. Heat treatment changes strength, not stiffness.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import { antiRollBar, explain } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields, otherRateUnits,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const lengthUnit = () => (form.elements.units.value === 'imperial' ? 'in' : 'mm');
+
+  /* Bar rate has its own unit control rather than following the mm/inch
+     switch. Bars and springs are bought in N/mm, kgf/mm and lb/in, and two
+     of those are metric, so the system switch cannot express the choice.
+     See RATE_UNITS in shared/units.js. */
+  const stiffUnit = () => form.elements.rateUnit.value;
+
+  function setUnitLabels() {
+    const imperial = form.elements.units.value === 'imperial';
+    for (const el of document.querySelectorAll('[data-unit="length"]')) {
+      el.textContent = imperial ? 'in' : 'mm';
+    }
+    for (const el of document.querySelectorAll('[data-unit="rate"]')) {
+      el.textContent = stiffUnit();
+    }
+  }
+
+  function onUnitChange(previous) {
+    const next = form.elements.units.value;
+    if (next === previous) return next;
+    convertEditableFields(previous, next);
+    setUnitLabels();
+    return next;
+  }
+
+  function readInput() {
+    const L = lengthUnit();
+    const len = (id) => toCanonical(Number(form.elements[id].value), L);
+    return {
+      barLength: len('barLength'),
+      barDiameter: len('barDiameter'),
+      barWall: len('barWall'),
+      barMaterial: form.elements.barMaterial.value,
+      armLength: len('armLength'),
+      armDiameter: len('armDiameter'),
+      armWall: len('armWall'),
+      armMaterial: form.elements.armMaterial.value,
+      adjustSpacing: len('adjustSpacing'),
+      adjustPositions: Number(form.elements.adjustPositions.value),
+    };
+  }
+
+  function render() {
+    const L = lengthUnit();
+    const S = stiffUnit();
+    const input = readInput();
+
+    const len = (v) => formatValue(fromCanonical(v, L), { decimals: L === 'in' ? 3 : 1 });
+    const rate = (v) => formatValue(fromCanonical(v, S), { decimals: S === 'lb/in' ? 1 : 2 });
+
+    try {
+      const r = antiRollBar(input);
+
+      $('stiffness').textContent = rate(r.stiffness);
+      // The other two units always visible: N/mm is the reference, but nobody
+      // orders a bar in it.
+      $('stiffness-alt').textContent = otherRateUnits(r.stiffness, S);
+
+      $('barStiffness').value = rate(r.barStiffness);
+      $('armStiffness').value = rate(r.armStiffness);
+      $('barShare').value = formatValue(r.barComplianceShare * 100, { decimals: 1 });
+      $('perMm').value = rate(r.stiffnessPerMmDiameter);
+      $('barInnerDiameter').value = len(r.barInnerDiameter);
+      $('armInnerDiameter').value = len(r.armInnerDiameter);
+
+      /* Which part governs is the actionable finding, so it carries a status
+         colour: heavily bar-dominated means the arms are not worth touching. */
+      const share = r.barComplianceShare * 100;
+      $('share-control').classList.remove('field__control--caution');
+      if (share > 75 || share < 25) $('share-control').classList.add('field__control--caution');
+
+      $('dominance-note').textContent = share >= 50
+        ? `The torsion bar supplies ${formatValue(share, { decimals: 0 })}% of the give, so bar diameter is the effective lever. Stiffer arms would barely move the rate.`
+        : `The lever arms supply ${formatValue(100 - share, { decimals: 0 })}% of the give, so they govern. Unusual. Check the arm diameter and wall.`;
+
+      // Adjustment table
+      const rows = r.positions;
+      $('positions-group').hidden = rows.length < 2;
+      $('positions-rows').innerHTML = rows.map((p) => `
+        <tr class="table__row${p.index === 0 ? ' table__row--mark' : ''}">
+          <td class="table__cell table__cell--label">${p.index + 1}</td>
+          <td class="table__cell">${len(p.armLength)}</td>
+          <td class="table__cell">${rate(p.stiffness)}</td>
+        </tr>`).join('');
+
+      $('range-note').textContent = rows.length > 1
+        ? `Hole 1 is the softest. The full range is ${rate(rows[0].stiffness)} to `
+          + `${rate(rows[rows.length - 1].stiffness)} ${S}, a spread of `
+          + `${formatValue((rows[rows.length - 1].stiffness / rows[0].stiffness - 1) * 100, { decimals: 0 })}%.`
+        : '';
+
+      drawDiagram(input, r, L);
+      renderWorking($('working'), explain(input, r, (v) => formatValue(v, { decimals: 2 })));
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      $('stiffness').textContent = '—';
+      $('stiffness-alt').textContent = '';
+      for (const id of ['barStiffness', 'armStiffness', 'barShare', 'perMm',
+                        'barInnerDiameter', 'armInnerDiameter']) {
+        $(id).value = '—';
+      }
+      $('dominance-note').textContent = '';
+      $('range-note').textContent = '';
+      $('positions-rows').innerHTML = '';
+      $('arb-scene').innerHTML = '';
+      renderWorking($('working'), []);
+    }
+
+    updateSheet(form, { unitLabel: L === 'in' ? 'inch' : 'mm' });
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Plan view of the U: torsion span across, arms forward, adjustment holes
+     marked. Drawn to scale in the bar's own dimensions, with the tube
+     sections shown separately since bore is what the rate hangs on.
+
+     Layout budget is stated rather than guessed. The two previous diagrams
+     both shipped with labels outside the viewBox from skipping this. */
+
+  const VIEW = { w: 340, h: 220 };
+
+  function drawDiagram(input, r, unit) {
+    const scene = $('arb-scene');
+    const n = (v) => Number(v.toFixed(2));
+    const dim = (v) => formatValue(fromCanonical(v, unit), { decimals: unit === 'in' ? 2 : 0 });
+
+    const span = input.barLength;
+    const arm = input.armLength;
+
+    const leftM = 24;
+    const rightM = 24;
+    const topM = 34;                    // span dimension and its label
+    const bottomM = 74;                 // section circles and their labels
+    const scale = Math.min(
+      (VIEW.w - leftM - rightM) / span,
+      (VIEW.h - topM - bottomM) / (arm * 1.25)
+    );
+
+    const cx = VIEW.w / 2;
+    const barY = topM;
+    const halfSpan = (span / 2) * scale;
+    const armPx = arm * scale;
+
+    /* Only the hole in use is marked. Drawing all of them was pointless:
+       20mm of spacing is about 5 units at this scale, so three holes
+       rendered as one blob. The table beside the diagram lists every
+       position with its rate, which is what someone actually reads. */
+    const linkY = barY + arm * scale;
+    const links = `
+      <circle class="diagram__cog" cx="${n(cx - halfSpan)}" cy="${n(linkY)}" r="4"/>
+      <circle class="diagram__cog" cx="${n(cx + halfSpan)}" cy="${n(linkY)}" r="4"/>`;
+
+    // tube sections, drawn at a fixed size so bore is legible whatever the bar
+    const secR = 16;
+    const secY = VIEW.h - 46;
+    const section = (x, od, id, label) => {
+      const ir = od > 0 ? (id / od) * secR : 0;
+      return `
+        <circle class="diagram__tyre" cx="${x}" cy="${secY}" r="${secR}"/>
+        ${ir > 0.5 ? `<circle class="diagram__hub" cx="${x}" cy="${secY}" r="${n(ir)}"/>` : ''}
+        <text class="diagram__value" x="${x}" y="${secY + secR + 14}" text-anchor="middle">${label}</text>`;
+    };
+
+    scene.innerHTML = `
+      <!-- torsion span -->
+      <line class="diagram__outline diagram__outline--heavy" x1="${n(cx - halfSpan)}" y1="${barY}"
+            x2="${n(cx + halfSpan)}" y2="${barY}"/>
+      <!-- lever arms -->
+      <line class="diagram__outline diagram__outline--heavy" x1="${n(cx - halfSpan)}" y1="${barY}"
+            x2="${n(cx - halfSpan)}" y2="${n(barY + armPx)}"/>
+      <line class="diagram__outline diagram__outline--heavy" x1="${n(cx + halfSpan)}" y1="${barY}"
+            x2="${n(cx + halfSpan)}" y2="${n(barY + armPx)}"/>
+      ${links}
+
+      <g class="diagram__dim">
+        <line x1="${n(cx - halfSpan)}" y1="${barY - 14}" x2="${n(cx + halfSpan)}" y2="${barY - 14}"/>
+        <line x1="${n(cx - halfSpan)}" y1="${barY - 18}" x2="${n(cx - halfSpan)}" y2="${barY - 10}"/>
+        <line x1="${n(cx + halfSpan)}" y1="${barY - 18}" x2="${n(cx + halfSpan)}" y2="${barY - 10}"/>
+      </g>
+      <text class="diagram__value" x="${cx}" y="${barY - 20}" text-anchor="middle">${dim(span)} ${unit}</text>
+
+      <g class="diagram__dim">
+        <line x1="${n(cx - halfSpan + 18)}" y1="${barY}" x2="${n(cx - halfSpan + 18)}" y2="${n(barY + armPx)}"/>
+        <line x1="${n(cx - halfSpan + 14)}" y1="${barY}" x2="${n(cx - halfSpan + 22)}" y2="${barY}"/>
+        <line x1="${n(cx - halfSpan + 14)}" y1="${n(barY + armPx)}" x2="${n(cx - halfSpan + 22)}" y2="${n(barY + armPx)}"/>
+      </g>
+      <text class="diagram__value" x="${n(cx - halfSpan + 32)}" y="${n(barY + armPx / 2)}"
+            text-anchor="middle" transform="rotate(-90 ${n(cx - halfSpan + 32)} ${n(barY + armPx / 2)})">${dim(arm)} ${unit}</text>
+
+      ${section(cx - 52, input.barDiameter, r.barInnerDiameter, 'bar')}
+      ${section(cx + 52, input.armDiameter, r.armInnerDiameter, 'arm')}
+      <text class="diagram__value" x="${cx}" y="${secY - secR - 10}" text-anchor="middle">sections to scale</text>
+    `;
+  }
+
+  let currentUnit = form.elements.units.value;
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    if (event.target.name === 'rateUnit') setUnitLabels();
+    render();
+  });
+  form.addEventListener('input', render);
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = form.elements.units.value;
+  setUnitLabels();
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

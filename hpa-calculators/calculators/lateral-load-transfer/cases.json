@@ -1,0 +1,298 @@
+{
+  "module": "./formula.js",
+  "export": "lateralLoadTransfer",
+  "tolerance": 1e-06,
+  "note": "Reproduces the source sheet: sprung mass 1296 kg, sprung front distribution 56.57746914%, sprung CoG 468.3256173 mm, roll moment arm 376.6143519 mm, roll moment 6703.458275 Nm, LLTD 52.34038372% front, and wheel loads 95.58827338 / 727.6557266 / 43.60696982 / 619.1490302 kg. Roll angle and gradient differ from the sheet in the fifth digit because the sheet used tan(1 degree) where radians belong; that factor cancels out of LLTD entirely. Lift g of 1.61214699 was verified independently: the rear inner reaches zero at 1.612 g and the front inner at 1.823 g, so the rear governs.",
+  "cases": [
+    {
+      "name": "Sheet defaults at 1.4 g",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 1.4
+      },
+      "expect": {
+        "sprungMass": 1296,
+        "sprungFrontPercent": 56.57746914,
+        "sprungCogZ": 468.32561728,
+        "rollMomentArm": 376.61435185,
+        "rollMoment": 6703.4582748,
+        "rollAngle": 1.80027112,
+        "rollGradient": 1.28590794,
+        "rollTotal": 3723.58262613,
+        "transferFront": 316.03372662,
+        "transferRear": 287.77103018,
+        "lltd": 52.34038372,
+        "balanceBias": -3.05961628,
+        "shareUnsprung": 9.24064508,
+        "shareElastic": 72.96315068,
+        "shareGeometric": 17.79620424,
+        "lltdElastic": 55.32135071,
+        "lltdGeometric": 42.86729541,
+        "wheelLoads": {
+          "frontInner": 95.58827338,
+          "frontOuter": 727.65572662,
+          "rearInner": 43.60696982,
+          "rearOuter": 619.14903018
+        },
+        "liftG": 1.61214699
+      }
+    },
+    {
+      "name": "LLTD does not change with lateral g \u2014 the model is linear",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 0.7
+      },
+      "expect": {
+        "lltd": 52.34038372,
+        "balanceBias": -3.05961628,
+        "rollGradient": 1.28590794,
+        "shareElastic": 72.96315068
+      }
+    },
+    {
+      "name": "But wheel loads and roll angle do",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 0.7
+      },
+      "expect": {
+        "rollAngle": 0.90013556,
+        "wheelLoads": {
+          "frontInner": 253.60513669,
+          "frontOuter": 569.63886331,
+          "rearInner": 187.49248491,
+          "rearOuter": 475.26351509
+        }
+      }
+    },
+    {
+      "name": "The rear inner lifts first, and the g at which it does is reported",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 2.4
+      },
+      "expect": {
+        "liftedWheel": "rear inner"
+      }
+    },
+    {
+      "name": "Lift g is independent of the g entered, since transfer is linear",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 0.7
+      },
+      "expect": {
+        "liftG": 1.61214699
+      }
+    },
+    {
+      "name": "Zero roll centres leave no geometric transfer",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 0,
+        "rollCentreRear": 0,
+        "lateralG": 1.4
+      },
+      "expect": {
+        "shareGeometric": 0
+      }
+    },
+    {
+      "name": "Equal ends give an LLTD of 50 percent",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1560,
+        "totalMass": 1486,
+        "frontMassPercent": 50,
+        "unsprungFront": 45,
+        "unsprungRear": 45,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 59,
+        "springMrFront": 1.2,
+        "springMrRear": 1.2,
+        "arbMrFront": 2.0,
+        "arbMrRear": 2.0,
+        "rollCentreFront": 70,
+        "rollCentreRear": 70,
+        "lateralG": 1.4
+      },
+      "expect": {
+        "lltd": 50.0,
+        "balanceBias": 0.0
+      }
+    },
+    {
+      "name": "Unsprung mass adding up to the whole car is rejected",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 400,
+        "unsprungRear": 400,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 98,
+        "springRear": 98,
+        "arbFront": 59,
+        "arbRear": 47,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 1.4
+      },
+      "expectError": true
+    },
+    {
+      "name": "Zero roll stiffness is rejected rather than dividing",
+      "input": {
+        "wheelbase": 2575,
+        "trackFront": 1560,
+        "trackRear": 1540,
+        "totalMass": 1486,
+        "frontMassPercent": 55.4,
+        "unsprungFront": 45,
+        "unsprungRear": 50,
+        "cogHeight": 450,
+        "unsprungCogFront": 325,
+        "unsprungCogRear": 325,
+        "springFront": 0,
+        "springRear": 0,
+        "arbFront": 0,
+        "arbRear": 0,
+        "springMrFront": 1.2,
+        "springMrRear": 1.35,
+        "arbMrFront": 2.0,
+        "arbMrRear": 1.9,
+        "rollCentreFront": 70,
+        "rollCentreRear": 120,
+        "lateralG": 1.4
+      },
+      "expectError": true
+    }
+  ]
+}

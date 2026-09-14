@@ -1,0 +1,115 @@
+{
+  "module": "./formula.js",
+  "export": "beltLength",
+  "tolerance": 0.001,
+  "note": "Row 1 is the shipped state of the original sheet (180 / 80 / 300 mm, 2500 rpm). The sheet returned 1016.7594862 using 3.14159 for pi; expected here is 1016.7598312 with full-precision pi. The equal-pulley row checks the size-difference term collapses to zero, and the last two rows check guards the original sheet had none of.",
+  "cases": [
+    {
+      "name": "Sheet default: 180 / 80 / 300 at 2500 rpm",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "centreDistance": 300,
+        "driveRpm": 2500
+      },
+      "expect": {
+        "length": 1016.7598312,
+        "arcTerm": 408.407045,
+        "wrapTerm": 16.7448079,
+        "spanTerm": 591.6079783,
+        "ratio": 2.25,
+        "drivenRpm": 5625
+      }
+    },
+    {
+      "name": "Equal pulleys: difference term must be exactly zero",
+      "input": {
+        "driveDiameter": 100,
+        "drivenDiameter": 100,
+        "centreDistance": 250
+      },
+      "expect": {
+        "length": 814.1592654,
+        "wrapTerm": 0,
+        "spanTerm": 500,
+        "ratio": 1
+      }
+    },
+    {
+      "name": "Large ratio: 250 / 60 / 400",
+      "input": {
+        "driveDiameter": 250,
+        "drivenDiameter": 60,
+        "centreDistance": 400
+      },
+      "expect": {
+        "length": 1309.6172581,
+        "ratio": 4.1666666667
+      }
+    },
+    {
+      "name": "Driven pulley larger than drive (overdrive reversed)",
+      "input": {
+        "driveDiameter": 80,
+        "drivenDiameter": 180,
+        "centreDistance": 300
+      },
+      "expect": {
+        "length": 1016.7598312,
+        "ratio": 0.4444444444
+      }
+    },
+    {
+      "name": "Target output rpm resolves to a required drive speed",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "centreDistance": 300,
+        "targetRpm": 8000
+      },
+      "expect": {
+        "requiredDriveRpm": 3555.5555556
+      }
+    },
+    {
+      "name": "Overlapping pulleys are rejected",
+      "input": {
+        "driveDiameter": 300,
+        "drivenDiameter": 80,
+        "centreDistance": 100
+      },
+      "expectError": true,
+      "expect": {}
+    },
+    {
+      "name": "Suggested driven diameter reproduces the target speed exactly",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 56.25,
+        "centreDistance": 300,
+        "driveRpm": 2500
+      },
+      "expect": {
+        "drivenRpm": 8000
+      }
+    },
+    {
+      "name": "Suggested drive diameter reproduces the target speed exactly",
+      "input": {
+        "driveDiameter": 256,
+        "drivenDiameter": 80,
+        "centreDistance": 300,
+        "driveRpm": 2500
+      },
+      "expect": {
+        "drivenRpm": 8000
+      }
+    }
+  ],
+  "crossCheck": {
+    "export": "beltGeometry",
+    "field": "pathLength",
+    "against": "length",
+    "note": "The diagram's belt path is built from the same tangent angle as the length formula, so the drawn path length must equal the calculated length. If these ever diverge, the picture and the number are telling the student different things."
+  }
+}

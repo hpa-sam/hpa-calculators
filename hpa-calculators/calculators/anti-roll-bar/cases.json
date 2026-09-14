@@ -1,0 +1,125 @@
+{
+  "module": "./formula.js",
+  "export": "antiRollBar",
+  "tolerance": 1e-06,
+  "note": "The spreadsheet returns 9.200264714 N/mm for these same inputs because it computed tube bore as OD minus wall rather than OD minus twice the wall. Reproducing that figure confirmed the rest of the sheet had been read correctly; the expected values here use the correct bore, which is 39.7 percent stiffer. Steel E = 200 GPa and G = 78 GPa, chromoly 205 and 80, as in the sheet.",
+  "cases": [
+    {
+      "name": "Sheet defaults, with the bore corrected",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 3,
+        "barMaterial": "steel",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "steel"
+      },
+      "expect": {
+        "armStiffness": 265.251867226,
+        "barStiffness": 17.24137137,
+        "stiffness": 15.25785077,
+        "armInnerDiameter": 18.5,
+        "barInnerDiameter": 18.5,
+        "barComplianceShare": 0.884955752,
+        "armComplianceShare": 0.115044248,
+        "stiffnessPerMmDiameter": 1.915591576
+      }
+    },
+    {
+      "name": "Zero wall means a solid bar, not a zero-diameter one",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 0,
+        "barMaterial": "steel",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 0,
+        "armMaterial": "steel"
+      },
+      "expect": {
+        "barInnerDiameter": 0,
+        "armInnerDiameter": 0,
+        "stiffness": 22.607713223
+      }
+    },
+    {
+      "name": "Chromoly is stronger, not meaningfully stiffer",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 3,
+        "barMaterial": "chromoly",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "chromoly"
+      },
+      "expect": {
+        "stiffness": 15.64795188
+      }
+    },
+    {
+      "name": "Materials are not swapped: bar material must not change arm stiffness",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 3,
+        "barMaterial": "chromoly",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "steel"
+      },
+      "expect": {
+        "armStiffness": 265.251867226
+      }
+    },
+    {
+      "name": "And arm material must not change bar stiffness",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 3,
+        "barMaterial": "steel",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "chromoly"
+      },
+      "expect": {
+        "barStiffness": 17.24137137
+      }
+    },
+    {
+      "name": "A wall of half the diameter leaves no bore and is rejected",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 13,
+        "barMaterial": "steel",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "steel"
+      },
+      "expectError": true
+    },
+    {
+      "name": "An unknown material is rejected rather than defaulted",
+      "input": {
+        "barLength": 1200,
+        "barDiameter": 24.5,
+        "barWall": 3,
+        "barMaterial": "titanium",
+        "armLength": 300,
+        "armDiameter": 24.5,
+        "armWall": 3,
+        "armMaterial": "steel"
+      },
+      "expectError": true
+    }
+  ]
+}

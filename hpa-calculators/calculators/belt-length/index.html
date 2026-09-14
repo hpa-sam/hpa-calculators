@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belt Length and Pulley Ratio Calculator | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <!-- Print only. On screen the Silverstripe page carries the title and
+       description, for search ranking; this is what identifies the sheet
+       once it's on paper and in a binder. -->
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Belt Length and Pulley Ratio Calculator</h2>
+      <p class="sheet__intro">Belt size and driven speed for a two-pulley drive.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Belt Length and Pulley Ratio Calculator</h1>
+      <p class="calc__intro">
+        Size a belt for a two-pulley drive, and check what the ratio does to
+        driven speed before you commit to pulley sizes.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Dry setup. Supercharger drive">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input drive data</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+            <span class="unit-switch__label">mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+            <span class="unit-switch__label">inch</span>
+          </label>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups groups--pair">
+          <div class="group">
+            <h2 class="group__title">Pulleys</h2>
+
+            <div class="field">
+              <label class="field__label" for="driveDiameter">
+                Drive pulley diameter
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="The driving pulley, usually the crank. Use the pitch diameter where the belt sits, not the outer flange.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="driveDiameter" name="driveDiameter"
+                       value="180" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="drivenDiameter">Driven pulley diameter
+    <button class="field__help" type="button" aria-label="More about this field"
+            data-help="Pitch diameter again, not the flange.">?</button>
+  </label>
+              <div class="field__control">
+                <input class="input" type="number" id="drivenDiameter" name="drivenDiameter"
+                       value="80" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="centreDistance">
+                Centre to centre distance
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Between the two pulley axes. Leave 5 to 10mm of adjustment for tensioning.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="centreDistance" name="centreDistance"
+                       value="300" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Speeds</h2>
+
+            <div class="field">
+              <label class="field__label" for="driveRpm">Drive pulley speed
+    <button class="field__help" type="button" aria-label="More about this field"
+            data-help="Engine speed if this is the crank pulley. Use the speed you actually run at, not idle.">?</button>
+  </label>
+              <div class="field__control">
+                <input class="input" type="number" id="driveRpm" name="driveRpm"
+                       value="2500" step="50" min="0" inputmode="numeric">
+                <span class="field__unit">rpm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="targetRpm">
+                Target driven speed
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Optional. The speed you want at the driven pulley. The sizing panel works back from it.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="targetRpm" name="targetRpm"
+                       value="8000" step="100" min="0" inputmode="numeric">
+                <span class="field__unit">rpm</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Results</div>
+      <div class="section__body">
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Belt length required</p>
+                <p class="readout__figure">
+                  <span id="length">—</span>
+                  <span class="readout__unit" data-unit="length">mm</span>
+                </p>
+                <p class="readout__alt" id="length-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced">
+              <div class="group">
+                <h2 class="group__title">Resulting speeds</h2>
+
+                <div class="field">
+                  <label class="field__label">Pulley ratio
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Drive divided by driven. Above 1 the driven pulley overspeeds the drive.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="ratio" readonly tabindex="-1" value="—">
+                    <span class="field__unit">: 1</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Driven speed at the drive speed entered</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="drivenRpm" readonly tabindex="-1" value="—">
+                    <span class="field__unit">rpm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">
+                    Belt surface speed
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Keep under about 30 m/s. Most V and toothed belts lose life quickly beyond that. Set by drive pulley size and speed, not by ratio.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="beltSpeed-control">
+                    <input class="input input--result" id="beltSpeed" readonly tabindex="-1" value="—">
+                    <span class="field__unit" id="beltSpeed-unit">m/s</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group" id="sizing-group" hidden>
+                <h2 class="group__title">
+                  Pulley sizing to hit your target
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="Two ways to reach the target: change the driven pulley or change the drive pulley. Pick whichever one you can actually change.">?</button>
+                </h2>
+
+                <div class="field">
+                  <label class="field__label">Driven pulley, if drive stays as entered</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="suggestedDrivenDiameter" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="length">mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Drive pulley, if driven stays as entered</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="suggestedDriveDiameter" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="length">mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Or keep both pulleys and drive it at</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="requiredDriveRpm" readonly tabindex="-1" value="—">
+                    <span class="field__unit">rpm</span>
+                  </div>
+                </div>
+
+                <p class="group__note" id="sizing-note"></p>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg" id="pulley-svg" viewBox="0 0 360 240"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="pulley-desc">
+                <desc id="pulley-desc">Scale drawing of the two pulleys and the belt path.</desc>
+                <g id="pulley-scene"></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Length is the theoretical belt path. Buy the nearest size up and set tension with the centre distance.</li>
+      <li>An open two-pulley drive with both pulleys in the same plane. Idlers, tensioners and crossed belts are not covered.</li>
+      <li>Diameters are pitch diameters, where the belt actually sits. Outer flange diameters overstate the length.</li>
+      <li>No belt slip is assumed. Surface speed is at the drive pulley.</li>
+      <li>Sizing suggestions are exact diameters. Real pulleys come in fixed sizes, so pick the nearest and re-check the speeds.</li>
+      <li>Belt power capacity, tension and wrap angle come from the manufacturer and are not checked here.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    beltLength, beltSpeed, beltGeometry, pulleySuggestion, explainSuggestion, explain,
+  } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const lengthUnit = () => (form.elements.units.value === 'imperial' ? 'in' : 'mm');
+
+  function onUnitChange(previous) {
+    const next = lengthUnit();
+    if (next === previous) return next;
+
+    // Discovered from the unit labels rather than listed here, so a new
+    // field converts correctly as soon as it's labelled.
+    convertEditableFields(
+      previous === 'in' ? 'imperial' : 'metric',
+      next === 'in' ? 'imperial' : 'metric'
+    );
+
+    for (const el of document.querySelectorAll('[data-unit="length"]')) {
+      el.textContent = next;
+    }
+    return next;
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Redrawn on every change. The geometry comes from beltGeometry(), which
+     shares its tangent angle with the length formula, so the drawing and
+     the number can't disagree. The parity suite asserts that.
+
+     The scene is built in real millimetres and then fitted to the viewBox
+     with a transform, which means no coordinate maths has to be repeated
+     here and the drawing stays true to scale at any pulley size.          */
+
+  const VIEW = { w: 360, h: 200, pad: 26 };
+
+  function drawDiagram(g, r, input, unit) {
+    const scene = document.getElementById('pulley-scene');
+
+    // Fit the drawing to the box, never magnifying past 1:1 so a tiny
+    // pulley pair doesn't fill the panel and look enormous.
+    const scale = Math.min(
+      (VIEW.w - VIEW.pad * 2) / g.width,
+      (VIEW.h - VIEW.pad * 2) / g.height
+    );
+    const offsetX = (VIEW.w - g.width * scale) / 2;
+    // Top-aligned, not centred: the viewBox grows downward to fit the label
+    // stacks, so centring against VIEW.h just left a gap under the drawing.
+    const offsetY = VIEW.pad;
+
+    const dim = (v) => formatValue(fromCanonical(v, unit), { decimals: unit === 'in' ? 2 : 0 });
+    const rpm = (v) => (v === undefined ? '' : formatValue(v, { decimals: 0 }) + ' rpm');
+
+    // Label positions are computed outside the scaled group, so text stays
+    // the same size whatever the pulleys do.
+    const px = (x, y) => ({ x: offsetX + x * scale, y: offsetY + y * scale });
+    const axis = px(0, g.drive.cy);
+    const axisEnd = px(g.width, g.drive.cy);
+
+    /* Both label stacks hang from a single baseline below the whole drawing,
+       rather than from each pulley's own bottom edge. Anchoring per-pulley
+       put the smaller pulley's label directly on the belt's lower tangent,
+       and left the two stacks on different baselines for no reason. */
+    const baseY = offsetY + g.height * scale;
+    const driveLabel = { x: px(g.drive.cx, 0).x, y: baseY };
+    const drivenLabel = { x: px(g.driven.cx, 0).x, y: baseY };
+
+    // Centre-distance dimension, sat below the lower of the two labels.
+    /* Label stack under each pulley: name, then diameter, then speed. The
+       gap before the speed is deliberately wider than the one before the
+       diameter. Name and diameter describe the part, the speed describes
+       what it's doing, and the spacing should say so. */
+    const NAME_Y = 18;
+    const DIAMETER_Y = 34;
+    const SPEED_Y = 54;
+
+    const dimY = Math.max(driveLabel.y, drivenLabel.y) + SPEED_Y + 22;
+    const dimA = px(g.drive.cx, 0).x;
+    const dimB = px(g.driven.cx, 0).x;
+
+    scene.innerHTML = `
+      <line class="diagram__axis" x1="${axis.x - 12}" y1="${axis.y}"
+            x2="${axisEnd.x + 12}" y2="${axis.y}"/>
+
+      <g transform="translate(${offsetX} ${offsetY}) scale(${scale})">
+        <circle class="diagram__body" cx="${g.drive.cx}" cy="${g.drive.cy}" r="${g.drive.r}"/>
+        <circle class="diagram__body" cx="${g.driven.cx}" cy="${g.driven.cy}" r="${g.driven.r}"/>
+        <path class="diagram__belt" d="${g.path}" vector-effect="non-scaling-stroke"/>
+        <circle class="diagram__rim diagram__rim--drive" cx="${g.drive.cx}" cy="${g.drive.cy}"
+                r="${Math.max(1, g.drive.r * 0.55)}" vector-effect="non-scaling-stroke"/>
+        <circle class="diagram__rim diagram__rim--driven" cx="${g.driven.cx}" cy="${g.driven.cy}"
+                r="${Math.max(1, g.driven.r * 0.55)}" vector-effect="non-scaling-stroke"/>
+      </g>
+
+      <text class="diagram__label diagram__label--drive" x="${driveLabel.x}"
+            y="${driveLabel.y + NAME_Y}" text-anchor="middle">Drive</text>
+      <text class="diagram__value" x="${driveLabel.x}" y="${driveLabel.y + DIAMETER_Y}"
+            text-anchor="middle">${dim(g.drive.r * 2)} ${unit}</text>
+      <text class="diagram__value" x="${driveLabel.x}" y="${driveLabel.y + SPEED_Y}"
+            text-anchor="middle">${rpm(input.driveRpm)}</text>
+
+      <text class="diagram__label diagram__label--driven" x="${drivenLabel.x}"
+            y="${drivenLabel.y + NAME_Y}" text-anchor="middle">Driven</text>
+      <text class="diagram__value" x="${drivenLabel.x}" y="${drivenLabel.y + DIAMETER_Y}"
+            text-anchor="middle">${dim(g.driven.r * 2)} ${unit}</text>
+      <text class="diagram__value" x="${drivenLabel.x}" y="${drivenLabel.y + SPEED_Y}"
+            text-anchor="middle">${rpm(r.drivenRpm)}</text>
+
+      <g class="diagram__dim">
+        <line x1="${dimA}" y1="${dimY}" x2="${dimB}" y2="${dimY}"/>
+        <line x1="${dimA}" y1="${dimY - 5}" x2="${dimA}" y2="${dimY + 5}"/>
+        <line x1="${dimB}" y1="${dimY - 5}" x2="${dimB}" y2="${dimY + 5}"/>
+      </g>
+      <text class="diagram__dim-label" x="${(dimA + dimB) / 2}" y="${dimY - 9}"
+            text-anchor="middle">centres ${dim(g.driven.cx - g.drive.cx)} ${unit}</text>
+      <text class="diagram__dim-label" x="${(dimA + dimB) / 2}" y="${dimY + 20}"
+            text-anchor="middle">belt ${dim(r.length)} ${unit} &#183; ratio ${formatValue(r.ratio, { decimals: 2 })}:1</text>
+    `;
+
+    // The box grows with the labels rather than clipping them.
+    const svg = document.getElementById('pulley-svg');
+    svg.setAttribute('viewBox', `0 0 ${VIEW.w} ${Math.max(VIEW.h, dimY + 30)}`);
+  }
+
+  function render() {
+    const unit = lengthUnit();
+    const num = (id) => {
+      const raw = form.elements[id].value;
+      return raw === '' ? undefined : Number(raw);
+    };
+
+    const input = {
+      driveDiameter: toCanonical(Number(form.elements.driveDiameter.value), unit),
+      drivenDiameter: toCanonical(Number(form.elements.drivenDiameter.value), unit),
+      centreDistance: toCanonical(Number(form.elements.centreDistance.value), unit),
+      driveRpm: num('driveRpm'),
+      targetRpm: num('targetRpm'),
+    };
+
+    try {
+      const r = beltLength(input);
+      const show = (v) => formatValue(fromCanonical(v, unit), { decimals: unit === 'in' ? 3 : 1 });
+
+      $('length').textContent = show(r.length);
+      $('length-alt').textContent = unit === 'in'
+        ? `${formatValue(r.length, { decimals: 0 })} mm`
+        : `${formatValue(fromCanonical(r.length, 'in'), { decimals: 2 })} in`;
+
+      $('ratio').value = formatValue(r.ratio, { decimals: 3 });
+
+      $('drivenRpm').value = r.drivenRpm === undefined
+        ? '—' : formatValue(r.drivenRpm, { decimals: 0 });
+      $('requiredDriveRpm').value = r.requiredDriveRpm === undefined
+        ? '—' : formatValue(r.requiredDriveRpm, { decimals: 0 });
+
+      // Belt surface speed, with the limit expressed as a status colour
+      // rather than buried in help text.
+      const surface = beltSpeed(input);
+      const speedControl = $('beltSpeed-control');
+      speedControl.classList.remove('field__control--caution', 'field__control--warn');
+      if (surface === undefined) {
+        $('beltSpeed').value = '—';
+      } else {
+        const imperialSpeed = unit === 'in';
+        $('beltSpeed').value = imperialSpeed
+          ? formatValue(fromCanonical(surface, 'ft/min'), { decimals: 0 })
+          : formatValue(surface, { decimals: 1 });
+        $('beltSpeed-unit').textContent = imperialSpeed ? 'ft/min' : 'm/s';
+        if (surface > 35) speedControl.classList.add('field__control--warn');
+        else if (surface > 30) speedControl.classList.add('field__control--caution');
+      }
+
+      const suggestion = pulleySuggestion({
+        driveDiameter: input.driveDiameter,
+        drivenDiameter: input.drivenDiameter,
+        driveRpm: input.driveRpm,
+        targetRpm: input.targetRpm,
+      });
+      const rpmFmt = (v) => formatValue(v, { decimals: 0 });
+
+      // Pulley sizing panel. Only shown once a target is actually set, and
+      // only when it differs meaningfully from what the current setup
+      // already does (no point suggesting a change of a fraction of a mm).
+      const sizingGroup = $('sizing-group');
+      const drivenOff = suggestion && Math.abs(suggestion.suggestedDrivenDiameter - input.drivenDiameter);
+      if (suggestion && drivenOff > 0.5) {
+        sizingGroup.hidden = false;
+        $('suggestedDrivenDiameter').value = formatValue(fromCanonical(suggestion.suggestedDrivenDiameter, unit), { decimals: unit === 'in' ? 3 : 1 });
+        $('suggestedDriveDiameter').value = formatValue(fromCanonical(suggestion.suggestedDriveDiameter, unit), { decimals: unit === 'in' ? 3 : 1 });
+        $('sizing-note').textContent =
+          `At ${rpmFmt(input.driveRpm)} rpm on the drive pulley this setup turns the driven pulley at ` +
+          `${rpmFmt(r.drivenRpm)} rpm. Reaching ${rpmFmt(input.targetRpm)} rpm needs a ratio of ` +
+          `${formatValue(suggestion.neededRatio, { decimals: 2 })}:1 rather than the current ` +
+          `${formatValue(r.ratio, { decimals: 2 })}:1.`;
+      } else {
+        sizingGroup.hidden = true;
+        $('sizing-note').textContent = '';
+      }
+
+      drawDiagram(beltGeometry(input), r, input, unit);
+
+      const fmt = (v) => formatValue(v, { decimals: 2 });
+      renderWorking(out(), [...explain(input, r, fmt), ...explainSuggestion(input, suggestion, fmt)]);
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      for (const id of ['length', 'length-alt']) $(id).textContent = '—';
+      for (const id of ['ratio', 'drivenRpm', 'requiredDriveRpm', 'beltSpeed']) {
+        $(id).value = '—';
+      }
+      $('beltSpeed').value = '—';
+      $('sizing-group').hidden = true;
+      $('sizing-note').textContent = '';
+      document.getElementById('pulley-scene').innerHTML = '';
+      renderWorking(out(), []);
+    }
+
+    updateSheet(form, { unitLabel: unit === 'in' ? 'inch' : 'mm' });
+  }
+
+  const out = () => $('working');
+
+  let currentUnit = lengthUnit();
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    render();
+  });
+  form.addEventListener('input', render);
+
+  // With no text label to change, the icon swaps to a tick and the button
+  // renames itself, so the confirmation reaches screen readers too.
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = lengthUnit();
+  for (const el of document.querySelectorAll('[data-unit="length"]')) {
+    el.textContent = currentUnit;
+  }
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

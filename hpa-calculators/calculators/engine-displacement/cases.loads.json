@@ -1,0 +1,89 @@
+{
+  "module": "./formula.js",
+  "export": "reciprocatingLoads",
+  "tolerance": 0.01,
+  "note": "Slider-crank kinematics. Expected accelerations were cross-checked by numerically differentiating the exact velocity expression, which agrees with the closed form r*w^2*(1+lambda) to full float precision. Peak piston speed has no tidy closed form and is found by sampling, so the angle is expected at the 0.05 degree resolution of that sweep.",
+  "cases": [
+    {
+      "name": "86 stroke, 143 rod, 7000 rpm, 420 g",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "rpm": 7000,
+        "pistonMass": 0.42
+      },
+      "expect": {
+        "rodRatio": 1.6627907,
+        "lambda": 0.3006993,
+        "meanPistonSpeed": 20.0666667,
+        "peakPistonSpeed": 32.9244901,
+        "peakSpeedAngle": 74.5,
+        "peakAcceleration": 30053.7506138,
+        "peakAccelerationG": 3064.6296762,
+        "bdcAcceleration": 16157.9304375,
+        "peakRodForce": 12622.5752578
+      }
+    },
+    {
+      "name": "Long rod lowers acceleration at the same stroke and speed",
+      "input": {
+        "stroke": 86,
+        "rodLength": 165,
+        "rpm": 7000
+      },
+      "expect": {
+        "rodRatio": 1.9186047,
+        "peakAcceleration": 29127.362602,
+        "peakSpeedAngle": 76.25,
+        "peakPistonSpeed": 32.5776886
+      },
+      "note": "Same stroke and speed as the row above, 22 mm more rod. Peak acceleration falls by about 3 percent, which is the point of the comparison."
+    },
+    {
+      "name": "Undersquare, long rod, 6000 rpm",
+      "input": {
+        "stroke": 74,
+        "rodLength": 152,
+        "rpm": 6000,
+        "pistonMass": 0.42
+      },
+      "expect": {
+        "rodRatio": 2.0540541,
+        "meanPistonSpeed": 14.8,
+        "peakAcceleration": 18162.6693623,
+        "peakRodForce": 7628.3211322
+      }
+    },
+    {
+      "name": "Piston mass omitted, so rod force is left undefined",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "rpm": 7000
+      },
+      "expect": {
+        "meanPistonSpeed": 20.0666666667
+      }
+    },
+    {
+      "name": "Rod shorter than the crank throw is rejected",
+      "input": {
+        "stroke": 200,
+        "rodLength": 90,
+        "rpm": 5000
+      },
+      "expectError": true,
+      "expect": {}
+    },
+    {
+      "name": "Zero rpm is rejected",
+      "input": {
+        "stroke": 86,
+        "rodLength": 143,
+        "rpm": 0
+      },
+      "expectError": true,
+      "expect": {}
+    }
+  ]
+}

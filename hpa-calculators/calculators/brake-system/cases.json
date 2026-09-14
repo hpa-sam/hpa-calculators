@@ -1,0 +1,334 @@
+{
+  "module": "./formula.js",
+  "export": "brakeSystem",
+  "tolerance": 1e-06,
+  "note": "Reproduces the source sheet on every figure it shares: load transfer 172.321875 kg, wheel torque 1253.144335 and 196.8346467 Nm, line pressure 4560.546854 and 1454.627013 kPa, required front bias 86.425 percent, suggested front master cylinder 18.50274266 mm, pedal effort 33.44179473 kg, pedal travel 31.9449962 mm, master cylinder strokes 9.71549848 and 3.0625 mm. The proportioning valve is the exception: the sheet's rear pressure cell multiplied the excess above the knee by the slope, which would give 2984.930 kPa here where dividing gives 944.526. A valve slows the rise of rear pressure, so dividing is correct. The first case passes the bores the sheet had fitted (15.88 and 25.4mm) so its pedal and stroke figures can be reproduced exactly; the calculator itself recommends a size rather than taking one, and never passes these.",
+  "cases": [
+    {
+      "name": "Sheet defaults at 1.1 g, no proportioning valve",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 1.1,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": false,
+        "kneePsi": 300,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expect": {
+        "transfer": 172.321875,
+        "frontAxle": 722.080875,
+        "rearAxle": 113.419125,
+        "torqueFront": 1253.144334686,
+        "torqueRear": 196.834646727,
+        "frontBias": 86.425,
+        "rearLifting": false,
+        "pressureFront": 4560.546853549,
+        "rawRear": 1454.627012527,
+        "pressureRear": 1454.627012527,
+        "valveActive": false,
+        "suggestedFront": 18.502742658,
+        "suggestedRear": 32.761874732,
+        "pedalEffort": 33.441794726,
+        "biasBar": 55.065452321,
+        "strokeFront": 9.71549848,
+        "strokeRear": 3.0625,
+        "strokeMismatch": 6.65299848,
+        "pedalTravel": 31.944996201,
+        "liftDecel": 1.824
+      }
+    },
+    {
+      "name": "A proportioning valve reduces rear pressure above its knee, never raises it",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 1.1,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": true,
+        "kneePsi": 100,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expect": {
+        "valveActive": true,
+        "pressureRear": 944.526137509,
+        "rawRear": 1454.627012527
+      }
+    },
+    {
+      "name": "Below its knee the valve does nothing",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 1.1,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": true,
+        "kneePsi": 400,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expect": {
+        "valveActive": false,
+        "pressureRear": 1454.627012527
+      }
+    },
+    {
+      "name": "Required bias climbs with deceleration, so one setting is a compromise",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 0.4,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": false,
+        "kneePsi": 300,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expect": {
+        "frontBias": 73.3
+      }
+    },
+    {
+      "name": "Pad depth taken as a radius leaves no rotor and is rejected",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 1.1,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 140,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": false,
+        "kneePsi": 300,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expectError": true
+    },
+    {
+      "name": "A caliper with no pistons is rejected rather than dividing by zero",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 1.1,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            0,
+            0,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": false,
+        "kneePsi": 300,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expectError": true
+    },
+    {
+      "name": "Rear lift is reported, not clamped",
+      "input": {
+        "wheelbase": 2400,
+        "totalMass": 835.5,
+        "frontPercent": 65.8,
+        "cogHeight": 450,
+        "decel": 2.0,
+        "downforceFront": 0,
+        "downforceRear": 0,
+        "radiusFront": 321.65,
+        "radiusRear": 321.65,
+        "front": {
+          "rotorDiameter": 280,
+          "padDepth": 42,
+          "pistons": [
+            35,
+            35,
+            0
+          ],
+          "padMu": 0.6
+        },
+        "rear": {
+          "rotorDiameter": 260,
+          "padDepth": 42,
+          "pistons": [
+            44.45,
+            0,
+            0
+          ],
+          "padMu": 0.4
+        },
+        "pedalRatio": 5,
+        "targetPedalEffort": 50,
+        "valveFitted": false,
+        "kneePsi": 300,
+        "slope": 3,
+        "masterFront": 15.88,
+        "masterRear": 25.4
+      },
+      "expect": {
+        "rearLifting": true
+      }
+    }
+  ]
+}

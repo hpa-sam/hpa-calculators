@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engine Displacement Calculator | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <!-- Print only. On screen the Silverstripe page carries the title and
+       description, for search ranking; this is what identifies the sheet
+       once it's on paper and in a binder. -->
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Engine Displacement Calculator</h2>
+      <p class="sheet__intro">Total swept capacity from bore, stroke and cylinder count.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Engine Displacement Calculator</h1>
+      <p class="calc__intro">
+        Work out total swept capacity from bore, stroke and cylinder count —
+        the first number you need when planning a build or sizing injectors.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. 4G63 2.0 stroker">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input engine data</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+            <span class="unit-switch__label">mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+            <span class="unit-switch__label">inch</span>
+          </label>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups">
+          <div class="group">
+            <h2 class="group__title">Cylinder dimensions</h2>
+
+            <div class="field">
+              <label class="field__label" for="bore">
+                Bore
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Finished diameter after any rebore. Common oversizes are +0.5 and +1.0mm.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="bore" name="bore"
+                       value="86" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="stroke">
+                Stroke
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Full travel between TDC and BDC. Twice the crank throw, not the throw itself.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="stroke" name="stroke"
+                       value="86" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="cylinders">Cylinders
+    <button class="field__help" type="button" aria-label="More about this field"
+            data-help="How many, not the layout. A V6 and a straight six both take 6.">?</button>
+  </label>
+              <div class="field__control">
+                <input class="input" type="number" id="cylinders" name="cylinders"
+                       value="4" step="1" min="1" inputmode="numeric">
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Rotating assembly</h2>
+
+            <div class="field">
+              <label class="field__label" for="rodLength">
+                Rod length
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Centre to centre of the two eyes, not the overall forging. Usually 1.5 to 2.0 times the stroke.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="rodLength" name="rodLength"
+                       value="143" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="compHeight">
+                Compression height
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Wrist pin centre to the crown, from the piston spec sheet. Typically 28 to 34mm on a 2 litre four.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="compHeight" name="compHeight"
+                       value="30" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pistonMass">
+                Reciprocating mass
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Piston, rings and pin, per cylinder. Typically 350 to 500g on an 86mm bore. Leave blank to skip rod force.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="pistonMass" name="pistonMass"
+                       value="420" step="5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="massSmall">g</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="rpm">
+                Engine speed to evaluate
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Use your intended rev limit. Reciprocating loads peak there and climb with the square of rpm.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="rpm" name="rpm"
+                       value="7000" step="100" min="0" inputmode="numeric">
+                <span class="field__unit">rpm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Compression</h2>
+
+            <div class="field">
+              <label class="field__label" for="deckClearance">
+                Deck clearance
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Crown below the deck at TDC, on a dial indicator. Factory engines are usually 0.2 to 0.6mm. Negative if the crown stands proud.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="deckClearance" name="deckClearance"
+                       value="0.5" step="0.05" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="chamberVolume">
+                Chamber volume
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Burette the head if you can. Production 2 litre fours run 40 to 50cc. Skimming the head reduces it.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="chamberVolume" name="chamberVolume"
+                       value="45" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit">cc</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="dishVolume">
+                Piston dish or dome
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Positive for a dish, negative for a dome. Turbo pistons are commonly 8 to 15cc dished. On the piston spec sheet.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="dishVolume" name="dishVolume"
+                       value="0" step="0.1" inputmode="decimal">
+                <span class="field__unit">cc</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="gasketThickness">
+                Gasket thickness
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Compressed, not shelf thickness. Factory gaskets are usually 1.0 to 1.3mm. Being 0.4mm out costs about 0.3:1 of ratio.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="gasketThickness" name="gasketThickness"
+                       value="0.8" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="gasketBore">
+                Gasket bore
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Normally 1 to 2mm larger than the cylinder bore. Check the gasket rather than assuming it matches.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="gasketBore" name="gasketBore"
+                       value="87" step="0.1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="ivcAbdc">
+                Intake closes
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Crank degrees after BDC, from the cam card. Stock cams 40 to 55, big cams 60 to 80. Blank to skip dynamic ratio.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="ivcAbdc" name="ivcAbdc"
+                       value="60" step="1" min="0" max="120" inputmode="decimal">
+                <span class="field__unit">&#176; ABDC</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="targetRatio">
+                Published ratio
+                <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Optional. A factory or catalogue figure to check against. This works back to the chamber volume it implies.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="targetRatio" name="targetRatio"
+                       value="" step="0.1" min="1" inputmode="decimal" placeholder="optional">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Results</div>
+      <div class="section__body">
+        <div class="notice" id="loads-error" role="alert" hidden></div>
+
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Total displacement</p>
+                <p class="readout__figure">
+                  <span id="displacement">—</span>
+                  <span class="readout__unit" id="displacement-unit">cc</span>
+                </p>
+                <p class="readout__alt" id="displacement-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced">
+              <div class="group">
+                <h2 class="group__title">Compression ratio</h2>
+
+                <div class="field">
+                  <label class="field__label">Static compression ratio
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="On pump fuel, up to about 11:1 naturally aspirated or 8.5 to 9.5:1 with boost. Above that needs race fuel and careful tuning.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="staticRatio" readonly tabindex="-1" value="—">
+                    <span class="field__unit">: 1</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Dynamic compression ratio
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Compression from where the intake actually shuts. Around 7.5 to 8.5:1 suits pump fuel, and this tracks detonation risk better than the static figure.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="dynamicRatio" readonly tabindex="-1" value="—">
+                    <span class="field__unit">: 1</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Clearance volume
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Chamber plus deck plus gasket plus dish. Every ratio here depends on it, so it is worth measuring rather than estimating.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked">
+                    <input class="input input--locked" id="clearanceVolume" readonly tabindex="-1" value="—">
+                    <span class="field__unit">cc</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Sensitivity
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="How much the static ratio moves per 0.1mm of deck clearance. Above about 0.1 here, measure the clearance rather than estimating it.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked">
+                    <input class="input input--locked" id="ratioPerTenth" readonly tabindex="-1" value="—">
+                    <span class="field__unit">: 1 per 0.1mm</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">Piston speed and loads</h2>
+
+                <div class="field">
+                  <label class="field__label">Mean piston speed
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Under 20 m/s for a road engine, up to about 24 for race. Beyond that, ring and bore life becomes the limit rather than the parts.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="mps-control">
+                    <input class="input input--result" id="meanPistonSpeed" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="velocity">m/s</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Peak acceleration, at TDC
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Crank throw and rod swing act together here, so it always exceeds BDC. Climbs with the square of rpm.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="peakAccelerationG" readonly tabindex="-1" value="—">
+                    <span class="field__unit">G</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Peak rod tensile force
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Load pulling the rod cap off at TDC. Halve it for per bolt. Rises with rpm squared, so 10% more revs is 21% more load. Stock bolts suit the factory rev limit; past that, check your rod maker&#x27;s clamp load and consider stronger bolts.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="peakRodForce" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="force">kN</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Rod:Stroke
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Rod divided by stroke. Most engines fall between 1.5 and 2.0. Longer dwells the piston near TDC and cuts peak acceleration.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked">
+                    <input class="input input--locked" id="rodRatio" readonly tabindex="-1" value="—">
+                    <span class="field__unit" id="rodRatio-note">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="groups groups--pair groups--spaced" id="reconcile-groups" hidden>
+              <div class="group">
+                <h2 class="group__title">Against the published figure</h2>
+
+                <div class="field">
+                  <label class="field__label">Chamber volume it implies
+    <button class="field__help" type="button" aria-label="More about this field"
+            data-help="What the published ratio requires, given your other figures. Compare it against your measured chamber.">?</button>
+  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="impliedChamberVolume" readonly tabindex="-1" value="—">
+                    <span class="field__unit">cc</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Difference from published
+    <button class="field__help" type="button" aria-label="More about this field"
+            data-help="Within 0.1 is agreement. Published figures are nominal. Beyond 0.5, one of your inputs is wrong.">?</button>
+  </label>
+                  <div class="field__control field__control--result" id="ratioDifference-control">
+                    <input class="input input--result" id="ratioDifference" readonly tabindex="-1" value="—">
+                    <span class="field__unit">: 1</span>
+                  </div>
+                </div>
+
+                <p class="group__note" id="reconcile-note"></p>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="cyl-svg" viewBox="0 0 340 440"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="cyl-desc">
+                <desc id="cyl-desc">Scale section of one cylinder showing the piston, rod and crank, with bore, stroke, rod length and deck clearance marked.</desc>
+                <g id="cyl-scene"></g>
+              </svg>
+              <div class="diagram__controls">
+                <button class="btn btn--secondary btn--small" type="button" id="anim-toggle"
+                        aria-pressed="false">Animate</button>
+                <label class="diagram__scrub">
+                  <span class="sr-only">Crank angle</span>
+                  <input class="range range--slim" type="range" id="anim-angle"
+                         min="0" max="360" step="1" value="0">
+                </label>
+                <span class="diagram__angle" id="anim-readout">0&#176; ATDC</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Displacement is swept volume only.</li>
+      <li>Compression ratios are only as good as the chamber, deck, gasket and dish figures entered. Deck clearance is the most sensitive.</li>
+      <li>Gasket volume assumes a round opening of the stated bore and compressed thickness.</li>
+      <li>Dish or dome is a single figure, so valve reliefs must be included in it.</li>
+      <li>Dynamic compression uses the piston position at intake closing. It ignores gas dynamics and cam ramp, so treat it as comparative, not as cylinder pressure.</li>
+      <li>Reciprocating loads ignore rod mass, gas pressure and friction. Peak rod tension is the inertia load at TDC on overlap, which is the case that sizes rod bolts.</li>
+      <li>Piston motion assumes a conventional crank with no pin or crank offset.</li>
+      <li>All figures are estimates for planning. Measure the parts you actually have.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    engineDisplacement, explain, reciprocatingLoads, explainLoads,
+    compressionRatio, explainCompression, crankGeometry,
+  } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const out = {
+    displacement: document.getElementById('displacement'),
+    displacementUnit: document.getElementById('displacement-unit'),
+    alt: document.getElementById('displacement-alt'),
+    working: document.getElementById('working'),
+  };
+
+  const loadsError = document.getElementById('loads-error');
+  const loadsOut = {
+    meanPistonSpeed: document.getElementById('meanPistonSpeed'),
+    mpsControl: document.getElementById('mps-control'),
+    rodRatio: document.getElementById('rodRatio'),
+    rodRatioNote: document.getElementById('rodRatio-note'),
+    peakAccelerationG: document.getElementById('peakAccelerationG'),
+    peakRodForce: document.getElementById('peakRodForce'),
+  };
+
+  const lengthUnit = () =>
+    form.elements.units.value === 'imperial' ? 'in' : 'mm';
+
+  const VIEW = { w: 340, h: 440 };
+
+  /* --- Diagram ------------------------------------------------------------
+     A section through one cylinder: piston, rod and crank, drawn to scale
+     from the same geometry the compression maths uses. crankGeometry() is
+     imported rather than reimplemented, so the picture cannot disagree with
+     the numbers. The fixtures pin its two boundary conditions.
+
+     Drawn as a real piston rather than a filled rectangle, which is what
+     removed the need for a key: a crown, ring lands and a skirt are
+     self-identifying in a way a coloured box is not.                      */
+
+  let animAngle = 0;
+  let animHandle = null;
+
+  function drawDiagram(input, r, unit) {
+    const scene = document.getElementById('cyl-scene');
+    const { bore, stroke } = input;
+    const rod = toCanonical(Number(form.elements.rodLength.value), unit);
+    const comp = toCanonical(Number(form.elements.compHeight.value), unit);
+    const clearance = toCanonical(Number(form.elements.deckClearance.value) || 0, unit);
+
+    /* Derived forward from the measured clearance. The same direction
+       compressionRatio() uses. The old input was block deck height, and
+       working back from it to a clearance meant subtracting one ~200mm
+       figure from another. */
+    const deck = stroke / 2 + rod + comp + clearance;
+
+    let g;
+    try {
+      g = crankGeometry({ stroke, rodLength: rod, compHeight: comp, deckHeight: deck, angle: animAngle });
+    } catch {
+      scene.innerHTML = '';
+      return;
+    }
+
+    const crankR = stroke / 2;
+
+    /* The assembly is tall and narrow. Roughly 260mm by 86mm, so the fit
+       is height-bound and the spare width goes to dimension labels rather
+       than to the drawing. */
+    const topOfDeck = deck;
+    /* Air under the crank circle has to clear the big end eye, which hangs
+       below the crank centre at BDC. 12mm was set when the rod ended in a
+       3-unit dot; with a real eye the rod overlapped the caption. The eye
+       radius is a fixed fraction of stroke, so it can be budgeted here
+       before the scale that would otherwise depend on it. */
+    const bigEyeMm = stroke * 0.279 * 1.35;
+    const drawnHeight = topOfDeck + crankR + bigEyeMm + 8;
+    /* Vertical budget stated rather than assumed: 40 above for the bore
+       dimension label, 74 below for the three caption lines. Leaving those
+       out put the top label at y = -9 and the last caption at 458 in a
+       440-tall box, so both were clipped. */
+    const boxTop = 40;
+    const boxBottom = VIEW.h - 74;
+    const scale = Math.min((boxBottom - boxTop) / drawnHeight, 150 / bore);
+
+    // mm above the crank centreline -> svg y
+    const cx = VIEW.w / 2 + 12;
+    // mm above the crank centreline -> svg y. Deck sits at boxTop.
+    const yOf = (mm) => boxTop + (topOfDeck - mm) * scale;
+
+    const halfBore = (bore / 2) * scale;
+    const deckY = yOf(deck);
+    const crankY = yOf(0);
+    const crownY = yOf(g.crownHeight);
+    const pinY = yOf(g.pinHeight);
+    const tdcCrownY = yOf(crankR + rod + comp);
+    const bdcCrownY = yOf(rod - crankR + comp);
+
+    const pinX = cx + g.crankPin.x * scale;
+    const crankPinY = yOf(g.crankPin.y);
+
+    const dim = (v) => formatValue(fromCanonical(v, unit), { decimals: unit === 'in' ? 3 : 1 });
+    const n = (v) => Number(v.toFixed(2));
+
+    // Capacity follows the switch too: cubic inches with an imperial bore.
+    const sweptLabel = unit === 'in'
+      ? `${formatValue(fromCanonical(r.perCylinder, 'cu in'), { decimals: 1 })} cu in`
+      : `${formatValue(r.perCylinder, { decimals: 1 })} cc`;
+
+    /* Piston: crown, ring band, skirt. Proportions are conventional
+       fractions of bore, not measured values. This is a section drawing,
+       not a part drawing.
+
+       The skirt runs the full bore width. It used to step inward on both
+       sides, which is the relief over the pin bosses, and that relief is
+       only visible looking ALONG the wrist pin, a view in which the rod
+       could not be seen swinging. Since the rod does swing here, this is
+       the thrust face, where the skirt is full width and carries the side
+       load. The old drawing showed both views at once. */
+    const pistonH = comp * scale * 1.55;
+    const skirtWaist = halfBore * 0.05;   // slight barrel, not a step
+    const piston = `
+      M ${n(cx - halfBore)} ${n(crownY)}
+      L ${n(cx + halfBore)} ${n(crownY)}
+      L ${n(cx + halfBore)} ${n(crownY + pistonH * 0.58)}
+      Q ${n(cx + halfBore - skirtWaist)} ${n(crownY + pistonH * 0.8)}
+        ${n(cx + halfBore)} ${n(crownY + pistonH)}
+      L ${n(cx - halfBore)} ${n(crownY + pistonH)}
+      Q ${n(cx - halfBore + skirtWaist)} ${n(crownY + pistonH * 0.8)}
+        ${n(cx - halfBore)} ${n(crownY + pistonH * 0.58)}
+      Z`;
+
+    /* --- Connecting rod ---------------------------------------------------
+       Built from the two pin centres, so it follows length and angle without
+       being told either. A unit vector along the rod and its perpendicular
+       give the four beam corners; the beam tapers from the small end to the
+       big end and is waisted between, which is what reads as an I-beam at
+       this line weight.
+
+       Every width is a fraction of the CURRENT centre distance rather than a
+       fixed number of units. With a short rod near mid-stroke a fixed width
+       puts the two bosses inside each other and the outline crosses itself.
+       Clamped this way the profile stays sane at any bore and stroke, which
+       matters because the crank angle is animated and every frame redraws. */
+    const rodDX = pinX - cx;
+    const rodDY = crankPinY - pinY;
+    const rodLen = Math.hypot(rodDX, rodDY) || 1;
+    const ux = rodDX / rodLen;
+    const uy = rodDY / rodLen;
+    const px = -uy;                       // perpendicular to the rod
+    const py = ux;
+
+    /* Journal and eye sizes from real proportions rather than fractions of
+       the bore, which had the big end swallowing the crank throw. Taking a
+       Honda K20 at 86 x 86 as the reference: 48mm rod journal, 50mm main,
+       21mm piston pin. So the rod journal is about 0.56 of the stroke, the
+       main a shade larger, and the pin about a quarter of the bore. The eye
+       around each journal adds the shell and the rod material, roughly a
+       third again on the big end and half on the small.
+
+       Still clamped against the rod length, so a very short rod cannot put
+       the two eyes inside one another. */
+    const rodJournalR = stroke * 0.279 * scale;
+    const mainJournalR = stroke * 0.29 * scale;
+    const pistonPinR = bore * 0.122 * scale;
+
+    const smallR = Math.min(pistonPinR * 1.55, rodLen * 0.2);
+    const bigR = Math.min(rodJournalR * 1.35, rodLen * 0.3);
+    const beamSmall = smallR * 0.62;
+    const beamBig = bigR * 0.62;
+    const waist = Math.min(beamSmall, beamBig) * 0.72;
+
+    // Points along the rod where the beam meets each boss.
+    const sx = cx + ux * smallR * 0.6;
+    const sy = pinY + uy * smallR * 0.6;
+    const bx = pinX - ux * bigR * 0.6;
+    const by = crankPinY - uy * bigR * 0.6;
+    const mx = (sx + bx) / 2;
+    const my = (sy + by) / 2;
+
+    const off = (x, y, d) => `${n(x + px * d)} ${n(y + py * d)}`;
+    const rodBeam = `
+      M ${off(sx, sy, beamSmall)}
+      Q ${off(mx, my, waist)} ${off(bx, by, beamBig)}
+      L ${off(bx, by, -beamBig)}
+      Q ${off(mx, my, -waist)} ${off(sx, sy, -beamSmall)}
+      Z`;
+
+    const rings = [0.16, 0.28, 0.42]
+      .map((f) => `<line class="diagram__ring" x1="${n(cx - halfBore)}" y1="${n(crownY + pistonH * f)}"
+                     x2="${n(cx + halfBore)}" y2="${n(crownY + pistonH * f)}"/>`)
+      .join('');
+
+    scene.innerHTML = `
+      <!-- swept region, so the stroke reads as a volume not just a distance -->
+      <rect class="diagram__swept" x="${n(cx - halfBore)}" y="${n(tdcCrownY)}"
+            width="${n(halfBore * 2)}" height="${n(bdcCrownY - tdcCrownY)}"/>
+
+      <!-- bore walls and deck line -->
+      <path class="diagram__outline"
+            d="M ${n(cx - halfBore)} ${n(crankY - 10)} L ${n(cx - halfBore)} ${n(deckY)}
+               L ${n(cx + halfBore)} ${n(deckY)} L ${n(cx + halfBore)} ${n(crankY - 10)}"/>
+
+      <!-- crank: pin path, then the throw and counterweight, then the
+           main journal. The counterweight sits opposite the pin, which is
+           what it does on a real crank and what makes the rotation read. -->
+      <circle class="diagram__crank" cx="${n(cx)}" cy="${n(crankY)}" r="${n(crankR * scale)}"/>
+      <path class="diagram__web" d="M ${n(cx)} ${n(crankY)} L ${n(pinX)} ${n(crankPinY)}"/>
+      <circle class="diagram__counterweight" cx="${n(cx - (pinX - cx) * 0.30)}"
+              cy="${n(crankY - (crankPinY - crankY) * 0.30)}" r="${n(crankR * scale * 0.70)}"/>
+      <circle class="diagram__journal" cx="${n(cx)}" cy="${n(crankY)}" r="${n(Math.max(3, mainJournalR))}"/>
+      <line class="diagram__axis" x1="${n(cx - halfBore - 16)}" y1="${n(crankY)}"
+            x2="${n(cx + halfBore + 16)}" y2="${n(crankY)}"/>
+
+      <!-- rod: beam, then the two bosses over its ends -->
+      <path class="diagram__rod-beam" d="${rodBeam}"/>
+      <circle class="diagram__rod-boss" cx="${n(pinX)}" cy="${n(crankPinY)}" r="${n(bigR)}"/>
+      <circle class="diagram__rod-boss" cx="${n(cx)}" cy="${n(pinY)}" r="${n(smallR)}"/>
+      <circle class="diagram__pin" cx="${n(pinX)}" cy="${n(crankPinY)}" r="${n(Math.min(rodJournalR, bigR * 0.78))}"/>
+
+      <path class="diagram__piston" d="${piston}"/>
+      ${rings}
+      <circle class="diagram__pin" cx="${n(cx)}" cy="${n(pinY)}" r="3.4"/>
+
+      <!-- TDC / BDC references -->
+      <line class="diagram__crank" x1="${n(cx - halfBore - 6)}" y1="${n(tdcCrownY)}"
+            x2="${n(cx + halfBore + 30)}" y2="${n(tdcCrownY)}"/>
+      <line class="diagram__crank" x1="${n(cx - halfBore - 6)}" y1="${n(bdcCrownY)}"
+            x2="${n(cx + halfBore + 30)}" y2="${n(bdcCrownY)}"/>
+      <text class="diagram__dim-label" x="${n(cx + halfBore + 34)}" y="${n(tdcCrownY + 4)}">TDC</text>
+      <text class="diagram__dim-label" x="${n(cx + halfBore + 34)}" y="${n(bdcCrownY + 4)}">BDC</text>
+
+      <!-- bore across the top -->
+      <g class="diagram__dim">
+        <line x1="${n(cx - halfBore)}" y1="${n(deckY - 16)}" x2="${n(cx + halfBore)}" y2="${n(deckY - 16)}"/>
+        <line x1="${n(cx - halfBore)}" y1="${n(deckY - 21)}" x2="${n(cx - halfBore)}" y2="${n(deckY - 11)}"/>
+        <line x1="${n(cx + halfBore)}" y1="${n(deckY - 21)}" x2="${n(cx + halfBore)}" y2="${n(deckY - 11)}"/>
+      </g>
+      <text class="diagram__dim-label" x="${n(cx)}" y="${n(deckY - 22)}"
+            text-anchor="middle">bore ${dim(bore)} ${unit}</text>
+
+      <!-- stroke down the left -->
+      <g class="diagram__dim">
+        <line x1="${n(cx - halfBore - 22)}" y1="${n(tdcCrownY)}" x2="${n(cx - halfBore - 22)}" y2="${n(bdcCrownY)}"/>
+        <line x1="${n(cx - halfBore - 27)}" y1="${n(tdcCrownY)}" x2="${n(cx - halfBore - 17)}" y2="${n(tdcCrownY)}"/>
+        <line x1="${n(cx - halfBore - 27)}" y1="${n(bdcCrownY)}" x2="${n(cx - halfBore - 17)}" y2="${n(bdcCrownY)}"/>
+      </g>
+      <text class="diagram__dim-label" x="${n(cx - halfBore - 30)}" y="${n((tdcCrownY + bdcCrownY) / 2)}"
+            text-anchor="middle"
+            transform="rotate(-90 ${n(cx - halfBore - 30)} ${n((tdcCrownY + bdcCrownY) / 2)})">stroke ${dim(stroke)} ${unit}</text>
+
+      <!-- live values that change as the crank turns -->
+      <text class="diagram__label" x="${n(cx)}" y="${n(boxBottom + 16)}" text-anchor="middle">${
+        r.boreStrokeRatio > 1.02 ? 'Oversquare' : r.boreStrokeRatio < 0.98 ? 'Undersquare' : 'Square'
+      }</text>
+      <text class="diagram__dim-label" x="${n(cx)}" y="${n(boxBottom + 32)}" text-anchor="middle">rod ${dim(rod)} &#183; ratio ${formatValue(r.boreStrokeRatio, { decimals: 2 })}:1 &#183; ${sweptLabel}</text>
+      <text class="diagram__dim-label" x="${n(cx)}" y="${n(boxBottom + 48)}"
+            text-anchor="middle">crown to deck ${dim(g.crownToDeck)} ${unit}</text>
+    `;
+
+    document.getElementById('anim-readout').textContent = `${Math.round(animAngle)}\u00B0 ATDC`;
+  }
+
+  /* Switching units converts the values in the fields as well as the labels,
+     so the engine described doesn't silently change into a different one.
+     Which fields get converted is discovered from their unit labels. See
+     convertEditableFields in shared/units.js for why it isn't a list. */
+  function onUnitChange(previous) {
+    const next = lengthUnit();
+    if (next === previous) return next;
+
+    convertEditableFields(
+      previous === 'in' ? 'imperial' : 'metric',
+      next === 'in' ? 'imperial' : 'metric'
+    );
+    setUnitLabels(next);
+    return next;
+  }
+
+  /* One place that writes every unit label, so the length, mass, velocity
+     and force suffixes can never drift out of step with each other. */
+  function setUnitLabels(unit) {
+    const imperial = unit === 'in';
+    const labels = {
+      length: unit,
+      massSmall: imperial ? 'oz' : 'g',
+      velocity: imperial ? 'ft/min' : 'm/s',
+      force: imperial ? 'lbf' : 'kN',
+    };
+    for (const [quantity, text] of Object.entries(labels)) {
+      for (const el of document.querySelectorAll(`[data-unit="${quantity}"]`)) {
+        el.textContent = text;
+      }
+    }
+  }
+
+  function renderLoads(unit, dims) {
+    const imperial = unit === 'in';
+    const massUnit = imperial ? 'oz' : 'g';
+    const rawMass = form.elements.pistonMass.value;
+
+    const input = {
+      stroke: dims.stroke,
+      rodLength: toCanonical(Number(form.elements.rodLength.value), unit),
+      rpm: Number(form.elements.rpm.value),
+      pistonMass: rawMass === '' ? undefined : toCanonical(Number(rawMass), massUnit),
+    };
+
+    const blank = () => {
+      for (const key of ['meanPistonSpeed', 'rodRatio',
+                         'peakAccelerationG', 'peakRodForce']) {
+        loadsOut[key].value = '—';
+      }
+      loadsOut.rodRatioNote.textContent = '—';
+    };
+
+    try {
+      const r = reciprocatingLoads(input);
+
+      const speed = (v) => imperial
+        ? formatValue(fromCanonical(v, 'ft/min'), { decimals: 0 })
+        : formatValue(v, { decimals: 2 });
+
+      loadsOut.meanPistonSpeed.value = speed(r.meanPistonSpeed);
+      loadsOut.rodRatio.value = formatValue(r.rodRatio, { decimals: 3 });
+      loadsOut.rodRatioNote.textContent =
+        r.rodRatio >= 1.5 && r.rodRatio <= 2 ? 'typical' : 'unusual';
+
+      loadsOut.peakAccelerationG.value = formatValue(r.peakAccelerationG, { decimals: 0 });
+
+      loadsOut.peakRodForce.value = r.peakRodForce === undefined
+        ? '—'
+        : imperial
+          ? formatValue(fromCanonical(r.peakRodForce, 'lbf'), { decimals: 0 })
+          : formatValue(r.peakRodForce / 1000, { decimals: 2 });
+
+      /* Mean piston speed carries the status, because it's the figure that
+         decides whether a combination is a street engine or a race engine.
+         Production is generally held under about 20 m/s; race engines run
+         to about 24, past which ring and bore life is the limit rather
+         than the parts. */
+      loadsOut.mpsControl.classList.remove('field__control--caution', 'field__control--warn');
+      if (r.meanPistonSpeed > 24) loadsOut.mpsControl.classList.add('field__control--warn');
+      else if (r.meanPistonSpeed > 20) loadsOut.mpsControl.classList.add('field__control--caution');
+
+      loadsError.hidden = true;
+      return explainLoads(input, r, (v) => formatValue(v, { decimals: 2 }));
+    } catch (err) {
+      loadsError.textContent = err.message;
+      loadsError.hidden = false;
+      blank();
+      return [];
+    }
+  }
+
+  const compOut = {
+    staticRatio: document.getElementById('staticRatio'),
+    dynamicRatio: document.getElementById('dynamicRatio'),
+    clearanceVolume: document.getElementById('clearanceVolume'),
+    ratioPerTenth: document.getElementById('ratioPerTenth'),
+    impliedChamberVolume: document.getElementById('impliedChamberVolume'),
+    ratioDifference: document.getElementById('ratioDifference'),
+    diffControl: document.getElementById('ratioDifference-control'),
+    reconcileGroups: document.getElementById('reconcile-groups'),
+    reconcileNote: document.getElementById('reconcile-note'),
+  };
+
+  /* Deck clearance is measured and entered, not derived. See the comment
+     above compressionRatio() in formula.js for why deriving it from block
+     deck height made results wander. The diagram gets its deck height from
+     the result, computed forward. */
+  function compressionInput(unit, dims) {
+    const num = (id) => {
+      const raw = form.elements[id].value;
+      return raw === '' ? undefined : Number(raw);
+    };
+    const len = (id, fallback) => {
+      const v = num(id);
+      return v === undefined ? fallback : toCanonical(v, unit);
+    };
+
+    return {
+      bore: dims.bore,
+      stroke: dims.stroke,
+      rodLength: len('rodLength', 0),
+      compHeight: len('compHeight', 0),
+      deckClearance: len('deckClearance', 0),
+      chamberVolume: num('chamberVolume'),
+      dishVolume: num('dishVolume') ?? 0,
+      gasketThickness: len('gasketThickness', 0),
+      gasketBore: len('gasketBore', undefined),
+      ivcAbdc: num('ivcAbdc'),
+      targetRatio: num('targetRatio'),
+    };
+  }
+
+  function renderCompression(unit, dims) {
+    const input = compressionInput(unit, dims);
+
+    const blank = () => {
+      for (const key of ['staticRatio', 'dynamicRatio', 'clearanceVolume',
+                         'ratioPerTenth',
+                         'impliedChamberVolume', 'ratioDifference']) {
+        compOut[key].value = '—';
+      }
+      compOut.reconcileGroups.hidden = true;
+      compOut.reconcileNote.textContent = '';
+    };
+
+    try {
+      const r = compressionRatio(input);
+
+      compOut.staticRatio.value = formatValue(r.staticRatio, { decimals: 2 });
+      compOut.dynamicRatio.value = r.dynamicRatio === undefined
+        ? '—' : formatValue(r.dynamicRatio, { decimals: 2 });
+      compOut.clearanceVolume.value = formatValue(r.clearanceVolume, { decimals: 2 });
+      compOut.ratioPerTenth.value = formatValue(r.ratioPerTenthMmDeck, { decimals: 3 });
+
+      /* A negative deck clearance means the crown stands out of the block.
+         Legal on some builds, so it warns on the input rather than throwing. */
+      const deckControl = form.elements.deckClearance.closest('.field__control');
+      deckControl.classList.remove('field__control--caution', 'field__control--warn');
+      if (input.deckClearance < 0) deckControl.classList.add('field__control--warn');
+
+      if (r.impliedChamberVolume === undefined) {
+        compOut.reconcileGroups.hidden = true;
+        compOut.reconcileNote.textContent = '';
+      } else {
+        compOut.reconcileGroups.hidden = false;
+        compOut.impliedChamberVolume.value = formatValue(r.impliedChamberVolume, { decimals: 2 });
+        compOut.ratioDifference.value =
+          (r.ratioDifference >= 0 ? '+' : '') + formatValue(r.ratioDifference, { decimals: 2 });
+
+        /* Within a tenth of a ratio point is agreement, given how nominal
+           published figures are. Beyond half a point something is wrong. */
+        compOut.diffControl.classList.remove('field__control--caution', 'field__control--warn');
+        const off = Math.abs(r.ratioDifference);
+        if (off > 0.5) compOut.diffControl.classList.add('field__control--warn');
+        else if (off > 0.1) compOut.diffControl.classList.add('field__control--caution');
+
+        const chamberGap = r.impliedChamberVolume - input.chamberVolume;
+        compOut.reconcileNote.textContent = off <= 0.1
+          ? 'Matches the published figure within a tenth of a point, which is as close as a nominal spec gets.'
+          : `To reach ${formatValue(input.targetRatio, { decimals: 2 })}:1 the chamber would need to be ` +
+            `${formatValue(Math.abs(chamberGap), { decimals: 2 })} cc ${chamberGap > 0 ? 'larger' : 'smaller'} ` +
+            `than the ${formatValue(input.chamberVolume, { decimals: 2 })} cc entered. Published figures usually ` +
+            `assume zero deck clearance and a nominal gasket, so check those two before doubting the chamber.`;
+      }
+
+      return explainCompression(input, r, (v) => formatValue(v, { decimals: 2 }));
+    } catch (err) {
+      loadsError.textContent = err.message;
+      loadsError.hidden = false;
+      blank();
+      return [];
+    }
+  }
+
+  /* --- Animation ---------------------------------------------------------
+     User-triggered only. It answers "what changes when I change the stroke
+     or the rod", which is a question you have to be asking, so it never
+     autoplays, and the scrub slider gives the same information with no
+     motion at all for anyone who prefers that.
+
+     The loop stops itself when the frame scrolls out of view, so an
+     embedded calculator further down a Silverstripe page isn't burning a
+     phone battery unseen. */
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function stopAnimation() {
+    if (animHandle) cancelAnimationFrame(animHandle);
+    animHandle = null;
+    document.getElementById('anim-toggle').setAttribute('aria-pressed', 'false');
+    document.getElementById('anim-toggle').textContent = 'Animate';
+  }
+
+  function startAnimation() {
+    if (animHandle) return;
+    const toggle = document.getElementById('anim-toggle');
+    toggle.setAttribute('aria-pressed', 'true');
+    toggle.textContent = 'Pause';
+
+    let last = performance.now();
+    const step = (now) => {
+      // 90 degrees a second: slow enough to follow the rod swinging.
+      animAngle = (animAngle + ((now - last) / 1000) * 90) % 360;
+      last = now;
+      document.getElementById('anim-angle').value = String(Math.round(animAngle));
+      render();
+      animHandle = requestAnimationFrame(step);
+    };
+    animHandle = requestAnimationFrame(step);
+  }
+
+  document.getElementById('anim-toggle').addEventListener('click', () => {
+    if (animHandle) stopAnimation();
+    else startAnimation();
+  });
+
+  document.getElementById('anim-angle').addEventListener('input', (event) => {
+    stopAnimation();
+    animAngle = Number(event.target.value);
+    render();
+  });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) stopAnimation();
+    }).observe(document.getElementById('cyl-svg'));
+  }
+
+  function render() {
+    const unit = lengthUnit();
+    const input = {
+      bore: toCanonical(Number(form.elements.bore.value), unit),
+      stroke: toCanonical(Number(form.elements.stroke.value), unit),
+      cylinders: Number(form.elements.cylinders.value),
+    };
+
+    try {
+      const r = engineDisplacement(input);
+      const imperial = unit === 'in';
+
+      // Capacity convention: cc for a metric engine, cubic inches for an
+      // imperial one, with the other two shown underneath.
+      const litres = r.displacement / 1000;
+      const cubicInches = fromCanonical(r.displacement, 'cu in');
+
+      if (imperial) {
+        out.displacement.textContent = formatValue(cubicInches, { decimals: 1 });
+        out.displacementUnit.textContent = 'cu in';
+        out.alt.textContent =
+          `${formatValue(r.displacement, { decimals: 0 })} cc · ${formatValue(litres, { decimals: 2 })} L`;
+      } else {
+        out.displacement.textContent = formatValue(r.displacement, { decimals: 0 });
+        out.displacementUnit.textContent = 'cc';
+        out.alt.textContent =
+          `${formatValue(litres, { decimals: 2 })} L · ${formatValue(cubicInches, { decimals: 1 })} cu in`;
+      }
+
+
+      drawDiagram(input, r, unit);
+
+      /* One working panel for the section, so the displacement steps and
+         the reciprocating-load steps read as one derivation rather than two
+         competing toggles. */
+      const loadSteps = renderLoads(unit, input);
+      const compSteps = renderCompression(unit, input);
+
+      // The working panel always shows canonical mm, whatever the switch
+      // says, so the substituted numbers match the formula as written.
+      const fmt = (v) => formatValue(v, { decimals: 2 });
+      renderWorking(out.working, [...explain(input, r, fmt), ...compSteps, ...loadSteps]);
+
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      out.displacement.textContent = '—';
+      out.alt.textContent = '';
+      document.getElementById('cyl-scene').innerHTML = '';
+      renderWorking(out.working, []);
+      renderLoads(unit, input);
+    }
+
+    updateSheet(form, { unitLabel: unit === 'in' ? 'inch' : 'mm' });
+  }
+
+  let currentUnit = lengthUnit();
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    render();
+  });
+  form.addEventListener('input', render);
+
+  // With no text label to change, the icon swaps to a tick and the button
+  // renames itself, so the confirmation reaches screen readers too.
+  document.getElementById('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  document.getElementById('print').addEventListener('click', () => window.print());
+
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = lengthUnit();
+  setUnitLabels(currentUnit);
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

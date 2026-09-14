@@ -1,0 +1,76 @@
+{
+  "module": "./formula.js",
+  "export": "engineDisplacement",
+  "tolerance": 0.001,
+  "note": "Displacement rows come from the original sheet (bore 86, stroke 86, 4 cyl); expected values use full-precision pi. The reciprocating-load fixtures below are new work, validated against numeric differentiation of the exact slider-crank velocity rather than against a spreadsheet.",
+  "cases": [
+    {
+      "name": "Sheet default: 86 x 86 x 4",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "cylinders": 4
+      },
+      "expect": {
+        "displacement": 1998.2288569,
+        "perCylinder": 499.5572142,
+        "boreStrokeRatio": 1
+      }
+    },
+    {
+      "name": "Undersquare six: 100 x 74 x 6",
+      "input": {
+        "bore": 100,
+        "stroke": 74,
+        "cylinders": 6
+      },
+      "expect": {
+        "displacement": 3487.1678455,
+        "boreStrokeRatio": 1.3513513514
+      }
+    },
+    {
+      "name": "Imperial-derived bore: 4.000in x 3.480in x 8",
+      "input": {
+        "bore": 101.6,
+        "stroke": 88.4,
+        "cylinders": 8
+      },
+      "expect": {
+        "displacement": 5733.4964675
+      }
+    },
+    {
+      "name": "Single cylinder boundary",
+      "input": {
+        "bore": 40,
+        "stroke": 40,
+        "cylinders": 1
+      },
+      "expect": {
+        "displacement": 50.2654825,
+        "boreStrokeRatio": 1
+      }
+    },
+    {
+      "name": "Zero bore is rejected rather than returning zero",
+      "input": {
+        "bore": 0,
+        "stroke": 86,
+        "cylinders": 4
+      },
+      "expectError": true,
+      "expect": {}
+    },
+    {
+      "name": "Fractional cylinder count is rejected",
+      "input": {
+        "bore": 86,
+        "stroke": 86,
+        "cylinders": 4.5
+      },
+      "expectError": true,
+      "expect": {}
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+/* ==========================================================================
+   tokens.css — the design language for all HPA calculators.
+
+   The ONLY file you edit to rebrand. Every calculator reads these variables,
+   so a change here changes every calculator at once.
+
+   Colour is organised by FIELD ROLE, taken from the XD mock. That's a
+   stronger system than naming colours by appearance, because a field's
+   colour then tells the user whether they can touch it:
+
+       blue   you type here
+       grey   we worked this out, read only
+       green  this is the answer
+
+   Section headers follow the same logic: yellow for inputs, grey for
+   intermediate calculations, green for results.
+   ========================================================================== */
+
+:root {
+
+  /* ---- Brand ------------------------------------------------------------ */
+
+  --color-brand:        #F9B621;   /* HPA primary yellow                    */
+  --color-brand-hover:  #E0A314;
+
+  /* Dark text on the yellow, not white. White on #F9B621 is about 2:1,
+     which is unreadable in a workshop and fails WCAG by a wide margin.
+     The yellow itself is untouched.                                       */
+  --color-brand-ink:    #1A1D1F;
+
+  /* ---- Surfaces and text ------------------------------------------------ */
+
+  --color-surface:      #FFFFFF;
+  --color-surface-sunk: #EFF1F2;   /* page/panel backing, as in the mock    */
+  --color-ink:          #1A1D1F;
+  --color-ink-muted:    #6B767C;
+  --color-line:         #D9DEE1;
+
+  /* ---- Field roles ------------------------------------------------------
+     Backgrounds are kept pale so the value itself stays the high-contrast
+     element. Borders carry the role at a stronger saturation for anyone who
+     can't separate the pale fills.                                        */
+
+  --field-input-bg:      #D6E8F7;   /* editable                             */
+  --field-input-border:  #94BFE0;
+  --field-input-ink:     #12212C;
+
+  --field-locked-bg:     #E7EAEC;   /* intermediate, read only              */
+  --field-locked-border: #CBD2D6;
+  --field-locked-ink:    #4A5559;
+
+  --field-result-bg:     #D8F0DE;   /* result                               */
+  --field-result-border: #8FCB9F;
+  --field-result-ink:    #14301D;
+
+  /* ---- Section headers --------------------------------------------------
+     The intermediate grey and results green are darker than the mock's, so
+     white header text clears 4.5:1. Same hues, more contrast.             */
+
+  --header-input-bg:        var(--color-brand);
+  --header-input-ink:       var(--color-brand-ink);
+  --header-result-bg:       #2E7D4F;
+  --header-dark-ink:        #FFFFFF;
+
+  /* A trial value: something being tried out rather than the setup you
+     entered or a computed result. Brand amber, so it reads as "in hand"
+     against the blue of inputs and the green of results, and nobody mistakes
+     an experiment for a measurement.                                        */
+  --field-trial-bg:      #FDF1D4;
+  --field-trial-border:  #E8B94E;
+  --field-trial-ink:     #6B4E10;
+
+  /* The line under judgement on a plot. Blue, because it has to be legible
+     against every zone colour and distinct from the black optimal line it is
+     being compared with. */
+  --plot-actual:  #1F5FA8;
+
+  /* Plot zones. Deliberately pale: they classify the background so a line
+     can be read against them, and must never compete with the line itself. */
+  --zone-danger:  #F3D9D9;
+  --zone-target:  #D9EBDD;
+  --zone-excess:  #ECEDEE;
+
+  /* ---- Status -----------------------------------------------------------
+     Three states, used by warnings and by any field that can go out of
+     range. Each pairs a fill with a text colour that passes on it.        */
+
+  --status-ok-ink:       #1B5E33;
+  --status-caution-bg:   #FBEFCE;
+  --status-caution-ink:  #6E5008;
+  --status-warn-bg:      #F9DAD7;
+  --status-warn-ink:     #8E241B;
+
+  --color-danger:        #B3261E;   /* validation errors                    */
+
+  /* ---- Diagram ----------------------------------------------------------
+     Schematics are line drawings, not illustrations. Three roles only:
+     the driving part, the driven part, and the thing connecting them.
+     Keeping it to three stops later calculators inventing their own.     */
+
+  --diagram-bg:      #FBFCFC;
+  --diagram-line:    #9AA5AB;   /* outlines, centre lines                 */
+  --diagram-drive:   var(--color-brand);
+  --diagram-driven:  #7C8B93;
+  --diagram-belt:    #1A1D1F;   /* the connecting element                 */
+  --diagram-fill:    #E7EBED;   /* bodies of components                   */
+  --diagram-dim:     #6B767C;   /* dimension lines and their labels       */
+
+  /* Focus is deliberately not brand yellow — a yellow ring on a yellow
+     button is invisible, and keyboard users need to see where they are.   */
+  --color-focus:         #0B6FD0;
+  --focus-ring:          0 0 0 3px color-mix(in srgb, var(--color-focus) 40%, transparent);
+
+  /* ---- Type --------------------------------------------------------------
+     Two roles. The second is subject-driven rather than decorative: this
+     audience reads dyno sheets, ECU tables and logger traces, all of which
+     set figures in aligned fixed-width columns. Matching that makes a
+     readout look like an instrument, and stops digits jittering as a value
+     recalculates.
+
+     Both stacks are system fonts, so there's no network cost. That matters
+     more than usual inside an iframe, where a webfont adds a visible
+     reflow in a second document the visitor is already waiting on. Drop
+     your brand face into --font-sans when you're ready; see the README.  */
+
+  --font-sans:   "Inter var", "Inter", -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-figure: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono",
+                 Menlo, Consolas, monospace;
+
+  /* 1.25 scale from a 16px base, rounded to whole pixels. */
+  --text-xs:   0.75rem;    /* 12px  units, footnotes, working panel        */
+  --text-sm:   0.875rem;   /* 14px  labels, help text                      */
+  --text-base: 1rem;       /* 16px  body and inputs (16px stops iOS zoom)  */
+  --text-lg:   1.125rem;   /* 18px  section headers                        */
+  --text-xl:   1.5rem;     /* 24px  secondary readouts                     */
+  --text-2xl:  2.5rem;     /* 40px  the primary answer                     */
+
+  --weight-medium: 500;
+  --weight-bold:   650;
+
+  --leading-tight: 1.15;
+  --leading-body:  1.5;
+
+  /* ---- Space -------------------------------------------------------------
+     4px grid, and the scale runs generous at the top end on purpose. The
+     brief asks for spacious and clearly segmented, so panel padding and
+     the gaps between sections come from --space-5 and up, never --space-2.
+     Using the scale rather than ad-hoc values is what keeps a calculator
+     built next year feeling like one built today.                         */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  /* ---- Shape -------------------------------------------------------------
+     Two radii, and the difference carries meaning:
+       --radius-control  things you touch (fields, buttons, toggles)
+       --radius-panel    things that contain other things
+     Resist a third. One radius everywhere flattens hierarchy; five reads
+     as indecision.                                                        */
+
+  --radius-control: 4px;
+  --radius-panel:   8px;
+  --border-width:   1px;
+
+  /* ---- Interaction ------------------------------------------------------ */
+
+  --accent:   var(--color-brand);   /* native range/checkbox/radio pick this up */
+  --duration: 120ms;
+  --easing:   cubic-bezier(0.2, 0, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration: 0ms; }
+}

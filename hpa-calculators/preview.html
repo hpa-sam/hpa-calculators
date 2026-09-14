@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview — HPA Calculators</title>
+<link rel="stylesheet" href="shared/tokens.css">
+<style>
+  /* Development harness only. Not deployed, not part of the design system —
+     it exists so you can see the calculators embedded the way the real site
+     will embed them, rather than opened standalone. */
+  body {
+    margin: 0;
+    padding: var(--space-6) var(--space-5) var(--space-8);
+    background: #F7F8F9;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: var(--leading-body);
+  }
+  .wrap { max-width: 74rem; margin: 0 auto; }
+  h1 { margin: 0 0 var(--space-2); font-size: 1.6rem; }
+  .lede { max-width: 40rem; margin: 0 0 var(--space-6); color: var(--color-ink-muted); font-size: var(--text-sm); }
+  .bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    margin-bottom: var(--space-6); padding: var(--space-4);
+    border: 1px solid var(--color-line); border-radius: var(--radius-panel);
+    background: #fff; font-size: var(--text-sm);
+  }
+  .bar__label { color: var(--color-ink-muted); }
+  .bar button {
+    min-height: 38px; padding: 0 var(--space-4);
+    border: 1px solid var(--color-line); border-radius: var(--radius-control);
+    background: #fff; font: inherit; font-size: var(--text-sm); cursor: pointer;
+  }
+  .bar button[aria-pressed="true"] { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-brand-ink); font-weight: 500; }
+  .host {
+    margin: 0 auto var(--space-7);
+    padding: var(--space-5);
+    border: 1px solid var(--color-line); border-radius: var(--radius-panel);
+    background: #fff;
+    transition: max-width 150ms ease;
+  }
+  .host__title {
+    display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4);
+    margin: 0 0 var(--space-4); padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--text-sm); font-weight: 600;
+  }
+  .host__meta { color: var(--color-ink-muted); font-weight: 400; font-family: var(--font-figure); font-size: var(--text-xs); }
+  .host__meta a { color: inherit; }
+  iframe { width: 100%; border: 0; display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Calculator preview</h1>
+  <p class="lede">
+    Each calculator below is in a real iframe, using the same auto-height
+    script that will go into the Silverstripe base template. If the height
+    figure updates as you change values or open a panel, the embed is
+    working. Use the width buttons to check the mobile layout — the
+    calculators reflow to the iframe width, not the browser width.
+  </p>
+
+  <div class="bar">
+    <span class="bar__label">Frame width</span>
+    <button type="button" data-width="100%" aria-pressed="true">Full</button>
+    <button type="button" data-width="48rem">Tablet</button>
+    <button type="button" data-width="24rem">Phone</button>
+  </div>
+
+  <div class="host" id="host-engine">
+    <p class="host__title">
+      <span>Engine Displacement</span>
+      <span class="host__meta">
+        <a href="calculators/engine-displacement/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/engine-displacement/"
+            title="Engine displacement calculator" style="height:620px"></iframe>
+  </div>
+
+  <div class="host" id="host-brake">
+    <p class="host__title">
+      <span>Brake System</span>
+      <span class="host__meta">
+        <a href="calculators/brake-system/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/brake-system/"
+            title="Brake system calculator" style="height:1200px"></iframe>
+  </div>
+
+  <div class="host" id="host-lltd">
+    <p class="host__title">
+      <span>Lateral Load Transfer Distribution</span>
+      <span class="host__meta">
+        <a href="calculators/lateral-load-transfer/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/lateral-load-transfer/"
+            title="Lateral load transfer distribution calculator" style="height:1200px"></iframe>
+  </div>
+
+  <div class="host" id="host-spring">
+    <p class="host__title">
+      <span>Spring Rate from Ride Frequency</span>
+      <span class="host__meta">
+        <a href="calculators/spring-rate/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/spring-rate/"
+            title="Spring rate calculator" style="height:1000px"></iframe>
+  </div>
+
+  <div class="host" id="host-arb">
+    <p class="host__title">
+      <span>Anti-Roll Bar Stiffness</span>
+      <span class="host__meta">
+        <a href="calculators/anti-roll-bar/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/anti-roll-bar/"
+            title="Anti-roll bar stiffness calculator" style="height:1000px"></iframe>
+  </div>
+
+  <div class="host" id="host-cog">
+    <p class="host__title">
+      <span>Centre of Gravity</span>
+      <span class="host__meta">
+        <a href="calculators/centre-of-gravity/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/centre-of-gravity/"
+            title="Centre of gravity calculator" style="height:1000px"></iframe>
+  </div>
+
+  <div class="host" id="host-belt">
+    <p class="host__title">
+      <span>Belt Length and Pulley Ratio</span>
+      <span class="host__meta">
+        <a href="calculators/belt-length/" target="_blank">open standalone</a>
+        &nbsp; height: <span data-height>—</span>
+      </span>
+    </p>
+    <iframe data-hpa-calc src="calculators/belt-length/"
+            title="Belt length calculator" style="height:760px"></iframe>
+  </div>
+
+</div>
+
+<script>
+/* This is the production snippet from EMBEDDING.md, with the origin
+   allowlist pointed at wherever you're serving from locally. */
+(function () {
+  var ALLOWED_ORIGINS = [window.location.origin];
+
+  function findFrame(source) {
+    var frames = document.querySelectorAll('iframe[data-hpa-calc]');
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].contentWindow === source) return frames[i];
+    }
+    return null;
+  }
+
+  window.addEventListener('message', function (event) {
+    if (ALLOWED_ORIGINS.indexOf(event.origin) === -1) return;
+
+    var data = event.data;
+    if (!data || data.type !== 'hpa:calc:height') return;
+
+    var height = parseInt(data.height, 10);
+    if (!height || height < 50 || height > 8000) return;
+
+    var frame = findFrame(event.source);
+    if (!frame) return;
+
+    frame.style.height = height + 'px';
+
+    // Preview-only: show the reported height so you can see it working.
+    var readout = frame.closest('.host').querySelector('[data-height]');
+    if (readout) readout.textContent = height + 'px';
+  });
+
+  // Width buttons, to check the responsive reflow.
+  var buttons = document.querySelectorAll('.bar button');
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+      button.setAttribute('aria-pressed', 'true');
+      document.querySelectorAll('.host').forEach(function (host) {
+        host.style.maxWidth = button.dataset.width;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

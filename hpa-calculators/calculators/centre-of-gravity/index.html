@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centre of Gravity Calculator | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Centre of Gravity Calculator</h2>
+      <p class="sheet__intro">Weight distribution from corner weights, and CoG height from an axle lift.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Centre of Gravity Calculator</h1>
+      <p class="calc__intro">
+        Weight distribution from four corner weights, and centre of gravity
+        height from re-weighing with one axle raised.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Dry setup. Full tank">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input car data</span>
+        <span class="unit-switch">
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+            <span class="unit-switch__label">mm</span>
+          </label>
+          <label>
+            <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+            <span class="unit-switch__label">inch</span>
+          </label>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups">
+          <div class="group">
+            <h2 class="group__title">Dimensions</h2>
+
+            <div class="field">
+              <label class="field__label" for="wheelbase">Wheelbase
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Front to rear axle centreline, measured level. Take it from the hub centres, not the bodywork.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="wheelbase" name="wheelbase"
+                       value="2578" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="trackFront">Track, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Centre to centre of the tyre contact patches across the axle.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="trackFront" name="trackFront"
+                       value="1520" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="trackRear">Track, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="trackRear" name="trackRear"
+                       value="1540" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="tyreRadius">Tyre radius
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Loaded radius at the axle still on the ground. Hub centre to ground with the car&#x27;s weight on it, not half the tyre&#x27;s stated diameter.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="tyreRadius" name="tyreRadius"
+                       value="320" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Corner weights, level
+              <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Car level, on the scales, at the ride height and fuel load you want to measure. Roll it on and settle the suspension before reading.">?</button>
+            </h2>
+
+            <div class="field">
+              <label class="field__label" for="frontLeft">Front left</label>
+              <div class="field__control">
+                <input class="input" type="number" id="frontLeft" name="frontLeft"
+                       value="348.5" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="frontRight">Front right</label>
+              <div class="field__control">
+                <input class="input" type="number" id="frontRight" name="frontRight"
+                       value="413" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="rearLeft">Rear left</label>
+              <div class="field__control">
+                <input class="input" type="number" id="rearLeft" name="rearLeft"
+                       value="309.5" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="rearRight">Rear right</label>
+              <div class="field__control">
+                <input class="input" type="number" id="rearRight" name="rearRight"
+                       value="304" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Axle lift
+              <button class="field__help" type="button" aria-label="More about this field"
+                      data-help="Raise one axle, leave the other on the scales, and read it again. Lift as high as you safely can. The accuracy of the height depends on it more than on anything else.">?</button>
+            </h2>
+
+            <div class="field">
+              <label class="field__label" for="raisedAxle">Axle raised</label>
+              <div class="field__control">
+                <select class="select" id="raisedAxle" name="raisedAxle">
+                  <option value="front" selected>Front</option>
+                  <option value="rear">Rear</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="liftHeight">Lift height
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="How far the raised axle centre rose above level. Aim for at least 15 degrees of tilt; below about 10 the answer gets unreliable fast.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="liftHeight" name="liftHeight"
+                       value="890" step="5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="liftedGroundWeight">Raised: weight still down
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Total on the axle still on the scales, with the other axle raised. It should read higher than level, because tipping the car moves weight downhill.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="liftedGroundWeight" name="liftedGroundWeight"
+                       value="655" step="0.5" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label">Lift angle it gives</label>
+              <div class="field__control field__control--locked" id="liftAngle-control">
+                <input class="input input--locked" id="liftAngle" readonly tabindex="-1" value="—">
+                <span class="field__unit">&#176;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Results</div>
+      <div class="section__body">
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Centre of gravity height</p>
+                <p class="readout__figure">
+                  <span id="height">—</span>
+                  <span class="readout__unit" data-unit="length">mm</span>
+                </p>
+                <p class="readout__alt" id="height-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced">
+              <div class="group">
+                <h2 class="group__title">Weight distribution</h2>
+
+                <div class="field">
+                  <label class="field__label">Total weight</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="total" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="mass">kg</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Front
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Most front-engined rear-drive cars land between 52 and 58 percent front. Mid-engined cars sit near 40 to 45.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="frontPercent" readonly tabindex="-1" value="—">
+                    <span class="field__unit">% front</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Left</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="leftPercent" readonly tabindex="-1" value="—">
+                    <span class="field__unit">% left</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Cross weight
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Front-left plus rear-right, as a share of the total. Fifty percent means the car sits square. Offsets are used deliberately on ovals.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="cross-control">
+                    <input class="input input--result" id="crossWeight" readonly tabindex="-1" value="—">
+                    <span class="field__unit">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">Position and confidence</h2>
+
+                <div class="field">
+                  <label class="field__label">Behind the front axle</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="cgFromFrontAxle" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="length">mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Off the centreline
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Positive is to the right. A few millimetres is normal; tens of millimetres usually means fuel, battery or driver ballast rather than a bent car.">?</button>
+                  </label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="cgLateralOffset" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="length">mm</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Weight transferred by the lift</label>
+                  <div class="field__control field__control--result" id="transfer-control">
+                    <input class="input input--result" id="weightTransferred" readonly tabindex="-1" value="—">
+                    <span class="field__unit" data-unit="mass">kg</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Cost of a 1 kg scale error
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="How much the height moves per kilogram of scale error. Lift angle sets this: near 5 degrees a kilogram is over 20mm, by 20 degrees it is nearer 5mm. Under about 10 mm per kg is a measurement worth trusting.">?</button>
+                  </label>
+                  <div class="field__control field__control--locked" id="sensitivity-control">
+                    <input class="input input--locked" id="mmPerKg" readonly tabindex="-1" value="—">
+                    <span class="field__unit">mm per kg</span>
+                  </div>
+                </div>
+
+                <p class="group__note" id="confidence-note"></p>
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="cog-svg" viewBox="0 0 340 300"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="cog-desc">
+                <desc id="cog-desc">Side elevation above plan view, both facing left with the car level, showing the centre of gravity position and height.</desc>
+                <g id="cog-scene"></g>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Weight distribution needs only the four corner weights and is independent of the lift.</li>
+      <li>The height formula is exact for a rigid car and uses the level wheelbase. No lift-angle correction is needed, as those terms cancel.</li>
+      <li>It assumes the suspension does not move between the level and raised readings. Settle the car, and restrain or solid-mount the suspension for best results.</li>
+      <li>Tyre radius is treated as constant. It changes slightly with load and pressure, and that error carries into the height.</li>
+      <li>Lift angle dominates accuracy. Below about 10 degrees the result is not worth much.</li>
+      <li>The car is assumed symmetrical enough that the average track represents where the centre of gravity sits laterally.</li>
+      <li>Figures are for the exact ride height, fuel load and ballast on the scales at the time.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    weightDistribution, cgHeight, explainDistribution, explainHeight,
+  } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const lengthUnit = () => (form.elements.units.value === 'imperial' ? 'in' : 'mm');
+  const massUnit = () => (form.elements.units.value === 'imperial' ? 'lb' : 'kg');
+
+  /* One place that writes every unit label, so length and mass suffixes
+     cannot drift apart. */
+  function setUnitLabels() {
+    const imperial = form.elements.units.value === 'imperial';
+    for (const el of document.querySelectorAll('[data-unit="length"]')) {
+      el.textContent = imperial ? 'in' : 'mm';
+    }
+    for (const el of document.querySelectorAll('[data-unit="mass"]')) {
+      el.textContent = imperial ? 'lb' : 'kg';
+    }
+  }
+
+  function onUnitChange(previous) {
+    const next = form.elements.units.value;
+    if (next === previous) return next;
+    // Fields are discovered from their unit labels. See shared/units.js.
+    convertEditableFields(previous, next);
+    setUnitLabels();
+    return next;
+  }
+
+  function readInput() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const len = (id) => toCanonical(Number(form.elements[id].value), L);
+    const mass = (id) => toCanonical(Number(form.elements[id].value), M);
+
+    return {
+      wheelbase: len('wheelbase'),
+      trackFront: len('trackFront'),
+      trackRear: len('trackRear'),
+      tyreRadius: len('tyreRadius'),
+      frontLeft: mass('frontLeft'),
+      frontRight: mass('frontRight'),
+      rearLeft: mass('rearLeft'),
+      rearRight: mass('rearRight'),
+      raisedAxle: form.elements.raisedAxle.value,
+      liftHeight: len('liftHeight'),
+      liftedGroundWeight: mass('liftedGroundWeight'),
+    };
+  }
+
+  function blank() {
+    for (const id of ['height', 'height-alt']) $(id).textContent = '—';
+    for (const id of ['total', 'frontPercent', 'leftPercent', 'crossWeight',
+                      'cgFromFrontAxle', 'cgLateralOffset', 'weightTransferred',
+                      'mmPerKg', 'liftAngle']) {
+      $(id).value = '—';
+    }
+    $('confidence-note').textContent = '';
+    $('cog-scene').innerHTML = '';
+    renderWorking($('working'), []);
+  }
+
+  function render() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const input = readInput();
+    const len = (v, d) => formatValue(fromCanonical(v, L), { decimals: d ?? (L === 'in' ? 2 : 1) });
+    const mass = (v) => formatValue(fromCanonical(v, M), { decimals: 1 });
+
+    try {
+      /* Distribution first, and on its own: it needs no lift, so a bad or
+         missing lift reading must not take the corner-weight answers down
+         with it. */
+      const d = weightDistribution(input);
+
+      $('total').value = mass(d.total);
+      $('frontPercent').value = formatValue(d.frontRatio * 100, { decimals: 2 });
+      $('leftPercent').value = formatValue(d.leftRatio * 100, { decimals: 2 });
+      $('crossWeight').value = formatValue(d.crossWeight * 100, { decimals: 2 });
+      $('cgFromFrontAxle').value = len(d.cgFromFrontAxle);
+      $('cgLateralOffset').value = len(d.cgLateralOffset);
+
+      // Cross weight away from square is worth flagging, not an error.
+      const crossOff = Math.abs(d.crossWeight * 100 - 50);
+      $('cross-control').classList.remove('field__control--caution');
+      if (crossOff > 2) $('cross-control').classList.add('field__control--caution');
+
+      const fmt = (v) => formatValue(v, { decimals: 2 });
+      let steps = explainDistribution(input, d, fmt);
+
+      let h = null;
+      try {
+        h = cgHeight(input);
+      } catch (liftErr) {
+        errorBox.textContent = liftErr.message;
+        errorBox.hidden = false;
+      }
+
+      if (h) {
+        errorBox.hidden = true;
+        $('height').textContent = len(h.height);
+        $('height-alt').textContent = L === 'in'
+          ? `${formatValue(h.height, { decimals: 0 })} mm`
+          : `${formatValue(fromCanonical(h.height, 'in'), { decimals: 2 })} in`;
+        $('liftAngle').value = formatValue(h.liftAngle, { decimals: 1 });
+        $('weightTransferred').value = mass(h.weightTransferred);
+        $('mmPerKg').value = formatValue(h.mmPerKg, { decimals: 1 });
+
+        /* Lift angle is the single biggest lever on accuracy, so both the
+           angle and its consequence carry a status colour. */
+        const angleControl = $('liftAngle-control');
+        angleControl.classList.remove('field__control--caution', 'field__control--warn');
+        if (h.liftAngle < 10) angleControl.classList.add('field__control--warn');
+        else if (h.liftAngle < 15) angleControl.classList.add('field__control--caution');
+
+        const sens = $('sensitivity-control');
+        sens.classList.remove('field__control--caution', 'field__control--warn');
+        if (h.mmPerKg > 20) sens.classList.add('field__control--warn');
+        else if (h.mmPerKg > 10) sens.classList.add('field__control--caution');
+
+        const transfer = $('transfer-control');
+        transfer.classList.remove('field__control--warn');
+        if (h.transferLooksWrong) transfer.classList.add('field__control--warn');
+
+        $('confidence-note').textContent = h.transferLooksWrong
+          ? 'Weight should move onto the axle still on the ground when the other end is raised. Check which axle you raised, and that the scales have not drifted.'
+          : `At ${formatValue(h.liftAngle, { decimals: 1 })}° of lift, a kilogram of scale error is `
+            + `${formatValue(h.mmPerKg, { decimals: 1 })} mm of height. `
+            + (h.mmPerKg > 10
+              ? 'Raise the car further if you can. This is the cheapest accuracy available.'
+              : 'That is a measurement worth trusting.');
+
+        steps = steps.concat(explainHeight(input, h, fmt));
+        drawDiagram(input, d, h, L);
+      } else {
+        for (const id of ['height', 'height-alt']) $(id).textContent = '—';
+        for (const id of ['liftAngle', 'weightTransferred', 'mmPerKg']) $(id).value = '—';
+        $('confidence-note').textContent = '';
+        drawDiagram(input, d, null, L);
+      }
+
+      renderWorking($('working'), steps);
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      blank();
+    }
+
+    updateSheet(form, { unitLabel: L === 'in' ? 'inch' : 'mm' });
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Side elevation above plan, both facing left, drawn to one scale so the
+     front axle lines up between them. It sits in the results side column
+     like the belt and cylinder diagrams: the numbers are all in the panel
+     beside it, so this only has to make the position legible.
+
+     Both views are level. Centre of gravity height is a property of the car
+     on its wheels; the axle lift is only how it's measured.
+
+     Plan is from above with the car facing left, which puts the car's right
+     side at the top. A right-hand-rule consequence, so both are marked.
+
+     Layout is budgeted rather than guessed: an earlier version placed the
+     height dimension and the direction arrow in the same band and they
+     overlapped. */
+
+  const VIEW = { w: 340, h: 300 };
+
+  function drawDiagram(input, d, h, unit) {
+    const scene = $('cog-scene');
+    const n = (v) => Number(v.toFixed(2));
+    const dim = (v) => formatValue(fromCanonical(v, unit), { decimals: unit === 'in' ? 1 : 0 });
+    const kg = (v) => formatValue(fromCanonical(v, massUnit()), { decimals: 0 });
+
+    const WB = input.wheelbase;
+    const R = input.tyreRadius;
+    const maxTrack = Math.max(input.trackFront, input.trackRear);
+    const overhang = 0.16 * WB;
+    const totalLen = WB + overhang * 2;
+
+    const leftM = 40;                 // height dimension
+    const rightM = 34;                // L / R markers
+    const scale = Math.min(
+      (VIEW.w - leftM - rightM) / totalLen,
+      190 / (2 * R + maxTrack)        // both stacked views
+    );
+
+    const sx = (mm) => leftM + (mm + overhang) * scale;
+
+    const sideGround = 88;
+    const sy = (mm) => sideGround - mm * scale;
+    const hubY = sy(R);
+
+    const planLabelY = sideGround + 20;
+    const planCy = planLabelY + 20 + (maxTrack / 2) * scale;
+    const py = (lat) => planCy - lat * scale;   // positive lateral = right = up
+
+    const halfF = input.trackFront / 2;
+    const halfR = input.trackRear / 2;
+    const planBottom = planCy + (maxTrack / 2) * scale;
+
+    const sideWheel = (mm) => `
+      <circle class="diagram__tyre" cx="${n(sx(mm))}" cy="${n(hubY)}" r="${n(R * scale)}"/>
+      <circle class="diagram__hub" cx="${n(sx(mm))}" cy="${n(hubY)}" r="${n(R * 0.4 * scale)}"/>`;
+
+    const tyreW = R * 0.60 * scale;
+    const tyreL = R * 1.4 * scale;
+    const planWheel = (mm, lat) => `
+      <rect class="diagram__tyre" x="${n(sx(mm) - tyreL / 2)}" y="${n(py(lat) - tyreW / 2)}"
+            width="${n(tyreL)}" height="${n(tyreW)}" rx="${n(tyreW * 0.3)}"/>`;
+
+    const marker = (x, y) => `
+      <circle class="diagram__cog" cx="${n(x)}" cy="${n(y)}" r="5"/>
+      <line class="diagram__dim" x1="${n(x - 9)}" y1="${n(y)}" x2="${n(x + 9)}" y2="${n(y)}"/>
+      <line class="diagram__dim" x1="${n(x)}" y1="${n(y - 9)}" x2="${n(x)}" y2="${n(y + 9)}"/>`;
+
+    const cogX = sx(d.cgFromFrontAxle);
+    const cogSideY = h ? sy(h.height) : null;
+
+    scene.innerHTML = `
+      <!-- one direction marker for both views, clear of everything else -->
+      <line class="diagram__dim" x1="8" y1="12" x2="30" y2="12"/>
+      <path class="diagram__arrow" d="M 8 12 L 16 8.5 L 16 15.5 Z"/>
+      <text class="diagram__label" x="35" y="16">front</text>
+
+      <line class="diagram__axis" x1="${n(sx(-overhang))}" y1="${sideGround}"
+            x2="${n(sx(WB + overhang))}" y2="${sideGround}"/>
+      <line class="diagram__outline" x1="${n(sx(0))}" y1="${n(hubY)}" x2="${n(sx(WB))}" y2="${n(hubY)}"/>
+      ${sideWheel(0)}${sideWheel(WB)}
+
+      ${h ? `
+      <g class="diagram__dim">
+        <line x1="${leftM - 14}" y1="${sideGround}" x2="${leftM - 14}" y2="${n(cogSideY)}"/>
+        <line x1="${leftM - 18}" y1="${sideGround}" x2="${leftM - 10}" y2="${sideGround}"/>
+        <line x1="${leftM - 18}" y1="${n(cogSideY)}" x2="${leftM - 10}" y2="${n(cogSideY)}"/>
+      </g>
+      <line class="diagram__crank" x1="${leftM - 14}" y1="${n(cogSideY)}" x2="${n(cogX)}" y2="${n(cogSideY)}"/>
+      <text class="diagram__dim-label" x="${leftM - 22}" y="${n((sideGround + cogSideY) / 2)}"
+            text-anchor="middle" transform="rotate(-90 ${leftM - 22} ${n((sideGround + cogSideY) / 2)})">${dim(h.height)} ${unit}</text>
+      ${marker(cogX, cogSideY)}
+      ` : ''}
+
+      <line class="diagram__axis" x1="${n(sx(-overhang))}" y1="${n(planCy)}"
+            x2="${n(sx(WB + overhang))}" y2="${n(planCy)}"/>
+      <line class="diagram__outline" x1="${n(sx(0))}" y1="${n(py(halfF))}" x2="${n(sx(0))}" y2="${n(py(-halfF))}"/>
+      <line class="diagram__outline" x1="${n(sx(WB))}" y1="${n(py(halfR))}" x2="${n(sx(WB))}" y2="${n(py(-halfR))}"/>
+      <line class="diagram__outline" x1="${n(sx(0))}" y1="${n(py(halfF))}" x2="${n(sx(WB))}" y2="${n(py(halfR))}"/>
+      <line class="diagram__outline" x1="${n(sx(0))}" y1="${n(py(-halfF))}" x2="${n(sx(WB))}" y2="${n(py(-halfR))}"/>
+
+      ${planWheel(0, halfF)}${planWheel(0, -halfF)}
+      ${planWheel(WB, halfR)}${planWheel(WB, -halfR)}
+
+      <text class="diagram__value" x="${n(sx(0))}" y="${n(py(halfF) - 14)}" text-anchor="middle">${kg(input.frontRight)} ${massUnit() === "lb" ? "lb" : "kg"}</text>
+      <text class="diagram__value" x="${n(sx(WB))}" y="${n(py(halfR) - 14)}" text-anchor="middle">${kg(input.rearRight)} ${massUnit() === "lb" ? "lb" : "kg"}</text>
+      <text class="diagram__value" x="${n(sx(0))}" y="${n(py(-halfF) + 22)}" text-anchor="middle">${kg(input.frontLeft)} ${massUnit() === "lb" ? "lb" : "kg"}</text>
+      <text class="diagram__value" x="${n(sx(WB))}" y="${n(py(-halfR) + 22)}" text-anchor="middle">${kg(input.rearLeft)} ${massUnit() === "lb" ? "lb" : "kg"}</text>
+
+      <text class="diagram__dim-label" x="${n(sx(WB + overhang) + 6)}" y="${n(py(maxTrack / 2) + 4)}">R</text>
+      <text class="diagram__dim-label" x="${n(sx(WB + overhang) + 6)}" y="${n(py(-maxTrack / 2) + 4)}">L</text>
+
+      ${marker(cogX, planCy - d.cgLateralOffset * scale)}
+      <text class="diagram__dim-label" x="${n(cogX + 14)}" y="${n(planCy - d.cgLateralOffset * scale - 6)}">${dim(d.cgFromFrontAxle)} back</text>
+      <text class="diagram__dim-label" x="${n(cogX + 14)}" y="${n(planCy - d.cgLateralOffset * scale + 16)}">${dim(Math.abs(d.cgLateralOffset))} ${d.cgLateralOffset >= 0 ? 'R' : 'L'}</text>
+
+      <text class="diagram__value" x="${n((sx(0) + sx(WB)) / 2)}" y="${n(planBottom + 42)}" text-anchor="middle">${formatValue(d.frontRatio * 100, { decimals: 1 })}% front &#183; ${formatValue(d.leftRatio * 100, { decimals: 1 })}% left</text>
+    `;
+  }
+
+  let currentUnit = form.elements.units.value;
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    render();
+  });
+  form.addEventListener('input', render);
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = form.elements.units.value;
+  setUnitLabels();
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

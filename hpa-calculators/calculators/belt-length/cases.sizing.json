@@ -1,0 +1,54 @@
+{
+  "module": "./formula.js",
+  "export": "pulleySuggestion",
+  "tolerance": 0.001,
+  "note": "New work, not from the original sheet. The two indirect cross-check cases in cases.json prove these numbers are correct: feeding a suggested diameter back through beltLength() must reproduce the target speed exactly, which is the property that actually matters to a student.",
+  "cases": [
+    {
+      "name": "Sheet default setup, target 8000 rpm",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "driveRpm": 2500,
+        "targetRpm": 8000
+      },
+      "expect": {
+        "neededRatio": 3.2,
+        "suggestedDrivenDiameter": 56.25,
+        "suggestedDriveDiameter": 256
+      }
+    },
+    {
+      "name": "Target below current driven speed, so the suggestion runs the other way",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "driveRpm": 2500,
+        "targetRpm": 4000
+      },
+      "expect": {
+        "neededRatio": 1.6,
+        "suggestedDrivenDiameter": 112.5,
+        "suggestedDriveDiameter": 128
+      }
+    },
+    {
+      "name": "No target set, so there is nothing to suggest",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "driveRpm": 2500
+      },
+      "expectUndefined": true
+    },
+    {
+      "name": "Target set but drive speed missing",
+      "input": {
+        "driveDiameter": 180,
+        "drivenDiameter": 80,
+        "targetRpm": 8000
+      },
+      "expectUndefined": true
+    }
+  ]
+}

@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lateral Load Transfer Distribution | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">Lateral Load Transfer Distribution</h2>
+      <p class="sheet__intro">Which axle takes the bigger share of load transfer in a corner, and what moves it.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Units: <span id="sheet-units"></span></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">Lateral Load Transfer Distribution</h1>
+      <p class="calc__intro">
+        In a corner load moves to the outside wheels. LLTD is the share of
+        that taken by the front axle. The figure that decides balance.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Baseline. Soft rear bar">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this setup" aria-label="Copy a link to this setup">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Collapsed by default: a page of reading someone needs once and then
+       wants out of the way of the calculator. `details` keeps it
+       keyboard-reachable without any script. -->
+  <details class="guide-panel">
+    <summary class="guide-panel__toggle">
+      <span class="section__chevron"></span>
+      How to use this
+    </summary>
+    <div class="guide-panel__body">
+        <div class="guide">
+          <p class="guide__lead">
+            This is a tuning tool, not a prediction. It cannot tell you what
+            your car will do. There are too many variables outside it, from
+            tyre construction and pressures to dampers, aero and the corner
+            itself. What it does well is tell you <em>how big a change you
+            just made</em>, before you spend money or track time finding out.
+            So it is worth most when used as a loop.
+          </p>
+          <ol class="guide__steps">
+            <li><strong>Establish a baseline.</strong> Enter the car as it sits
+              now and note the LLTD. Name it in the Setup box and copy the
+              link. That is your reference point. Put the figure in the
+              Baseline LLTD field and every later change is reported as a move
+              from it.</li>
+            <li><strong>See which lever has authority.</strong> Only the
+              elastic share responds to springs and bars. Geometric is set by
+              roll centre heights, and unsprung is fixed once the car is
+              built. If elastic dominates, a spring or bar change will move
+              the balance meaningfully; if it does not, expect to be
+              disappointed.</li>
+            <li><strong>Try one change and read the move.</strong> The sliders
+              in the results panel move each rate in catalogue steps. Half a
+              kgf/mm, five N/mm, twenty-five lb/in, so whatever you land on is
+              a part you could order. The trial figure appears in amber
+              alongside your setup, and your inputs are untouched until you
+              decide to keep it.</li>
+            <li><strong>Test it, then come back.</strong> Whether the new
+              number is better is a question only the track answers. If it is,
+              you now have a validated figure and know what produced it. If
+              the change fixed the balance but cost you something else. Ride,
+              aero platform, kerb tolerance. Come back and reach the same
+              LLTD a different way, for instance a stiffer spring paired with
+              a softer bar.</li>
+            <li><strong>Build a set of setups.</strong> Save each one you have
+              actually validated, with its LLTD. What counts as neutral is
+              something you find by testing, and it moves with conditions —
+              a car that is neutral at 55% front in the dry may want 53% in
+              the wet. Those are two saved setups, or two bar positions, not
+              two different cars.</li>
+          </ol>
+          <p class="guide__note">
+            Two things worth knowing about the figures. Lateral g does not
+            change LLTD. The model is linear, so more cornering moves more
+            load at both ends in the same proportion; the g figure is there for
+            the wheel loads and the lift limit. And a higher front share means
+            the front axle takes more of the transfer, which is a fact about
+            the setup rather than a verdict on the handling.
+          </p>
+        </div>
+    </div>
+  </details>
+
+  <form id="form" novalidate>
+
+    <div class="section">
+      <div class="section__header">
+        <span>Input car data</span>
+        <span class="switch-set">
+          <span class="unit-switch">
+            <label>
+              <input class="unit-switch__radio" type="radio" name="units" value="metric" checked>
+              <span class="unit-switch__label">mm</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="units" value="imperial">
+              <span class="unit-switch__label">inch</span>
+            </label>
+          </span>
+          <span class="unit-switch">
+            <label>
+              <input class="unit-switch__radio" type="radio" name="rateUnit" value="N/mm" checked>
+              <span class="unit-switch__label">N/mm</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="rateUnit" value="kg/mm">
+              <span class="unit-switch__label">kg/mm</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="rateUnit" value="lb/in">
+              <span class="unit-switch__label">lb/in</span>
+            </label>
+          </span>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+
+        <div class="groups groups--dense">
+          <div class="group">
+            <h2 class="group__title">Dimensions</h2>
+
+            <div class="field">
+              <label class="field__label" for="wheelbase">Wheelbase</label>
+              <div class="field__control">
+                <input class="input" type="number" id="wheelbase" name="wheelbase"
+                       value="2575" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="trackFront">Track, front</label>
+              <div class="field__control">
+                <input class="input" type="number" id="trackFront" name="trackFront"
+                       value="1560" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="trackRear">Track, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="trackRear" name="trackRear"
+                       value="1540" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Mass</h2>
+
+            <div class="field">
+              <label class="field__label" for="totalMass">Total mass
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="As weighed, with driver and the fuel load you are setting up for.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="totalMass" name="totalMass"
+                       value="1486" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="frontMassPercent">On the front axle
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="From corner weights. This is the figure LLTD gets compared against, so it matters as much as any of the stiffness inputs.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="frontMassPercent" name="frontMassPercent"
+                       value="55.4" step="0.1" min="0" max="100" inputmode="decimal">
+                <span class="field__unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungFront">Unsprung, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Per corner, not per axle: wheel, tyre, hub, brake and about half the arms. Typically 30 to 50 kg on a car.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungFront" name="unsprungFront"
+                       value="45" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungRear">Unsprung, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungRear" name="unsprungRear"
+                       value="50" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="mass">kg</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Centres of gravity</h2>
+
+            <div class="field">
+              <label class="field__label" for="cogHeight">Total CoG height
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Whole car, above the ground. Measure it with the centre of gravity calculator rather than guessing. It drives the roll moment directly.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="cogHeight" name="cogHeight"
+                       value="450" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungCogFront">Unsprung CoG, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Roughly the wheel centre height, so about half the loaded tyre diameter.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungCogFront" name="unsprungCogFront"
+                       value="325" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="unsprungCogRear">Unsprung CoG, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="unsprungCogRear" name="unsprungCogRear"
+                       value="325" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Springs</h2>
+
+            <div class="field">
+              <label class="field__label" for="springFront">Spring rate, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Rate of the spring itself, not at the wheel. The spring rate calculator produces this figure.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="springFront" name="springFront"
+                       value="98" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="springRear">Spring rate, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="springRear" name="springRear"
+                       value="98" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="springMrFront">Spring, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Wheel travel divided by spring travel, so 1.0 or more. Rates divide by its square, the same convention as the spring rate calculator.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="springMrFront" name="springMrFront"
+                       value="1.2" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="springMrRear">Spring, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="springMrRear" name="springMrRear"
+                       value="1.35" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Anti-roll bars</h2>
+
+            <div class="field">
+              <label class="field__label" for="arbFront">Bar rate, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="At the lever arm tip, with the other side held, which is what the anti-roll bar calculator gives you.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="arbFront" name="arbFront"
+                       value="59" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="arbRear">Bar rate, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="arbRear" name="arbRear"
+                       value="47" step="1" min="0" inputmode="decimal">
+                <span class="field__unit" data-unit="rate">N/mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="arbMrFront">Bar, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Wheel travel divided by drop-link travel at the arm tip. Often around 2 on a road car, which means the bar's wheel rate is a quarter of its own rate.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="arbMrFront" name="arbMrFront"
+                       value="2.0" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="arbMrRear">Bar, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="arbMrRear" name="arbMrRear"
+                       value="1.9" step="0.01" min="0" inputmode="decimal">
+                <span class="field__unit">: 1</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="group">
+            <h2 class="group__title">Roll centres and cornering</h2>
+
+            <div class="field">
+              <label class="field__label" for="rollCentreFront">Roll centre, front
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Above the ground, from the suspension geometry at ride height. Typically 0 to 120mm, and it can be below ground on a lowered car. It sets the geometric transfer, which acts instantly rather than waiting for roll.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="rollCentreFront" name="rollCentreFront"
+                       value="70" step="1" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="rollCentreRear">Roll centre, rear</label>
+              <div class="field__control">
+                <input class="input" type="number" id="rollCentreRear" name="rollCentreRear"
+                       value="120" step="1" inputmode="decimal">
+                <span class="field__unit" data-unit="length">mm</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="lateralG">Lateral acceleration
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Peak cornering g. It does not affect LLTD at all. It sets the wheel loads and tells you whether an inner wheel has lifted. Road tyres reach about 0.9, slicks 1.4 and up, with aero higher still.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="lateralG" name="lateralG"
+                       value="1.4" step="0.05" min="0" inputmode="decimal">
+                <span class="field__unit">G</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="baselineLltd">Baseline LLTD
+                <button class="field__help" type="button" aria-label="More about this field"
+                        data-help="Optional. The front share your reference setup gave, so any change is shown as a move from it. Leave blank until you have a baseline worth comparing against.">?</button>
+              </label>
+              <div class="field__control">
+                <input class="input" type="number" id="baselineLltd" name="baselineLltd"
+                       value="" step="0.1" min="0" max="100" inputmode="decimal" placeholder="optional">
+                <span class="field__unit">% front</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Results</div>
+      <div class="section__body">
+        <div class="notice" id="lift-notice" role="alert" hidden></div>
+
+        <div class="results">
+          <div class="results__main">
+
+            <output class="readout" for="form" aria-live="polite">
+              <div class="readout__body">
+                <p class="readout__label">Load transfer taken by the front</p>
+                <p class="readout__figure">
+                  <span id="lltd">—</span>
+                  <span class="readout__unit">% front</span>
+                </p>
+                <p class="readout__alt readout__alt--steady" id="lltd-alt"></p>
+              </div>
+              <div class="readout__body readout__body--trial">
+                <p class="readout__label">Trial</p>
+                <p class="readout__figure">
+                  <span id="trialLltd">—</span>
+                  <span class="readout__unit">% front</span>
+                </p>
+                <p class="readout__alt readout__alt--steady" id="trialLltd-alt"></p>
+              </div>
+              <div class="readout__body" id="move-body" hidden>
+                <p class="readout__label">Move from baseline</p>
+                <p class="readout__figure">
+                  <span id="move">—</span>
+                  <span class="readout__unit">pts</span>
+                </p>
+                <p class="readout__alt" id="move-alt"></p>
+              </div>
+            </output>
+
+            <div class="groups groups--pair groups--spaced groups--dense">
+              <div class="group">
+                <h2 class="group__title">Where the transfer comes from
+                  <button class="field__help" type="button" aria-label="More about this field"
+                          data-help="Only the elastic share responds to springs and bars. If it is small, spring changes will disappoint and you need geometry or mass instead.">?</button>
+                </h2>
+
+                <div class="field">
+                  <label class="field__label">Elastic, through springs and bars</label>
+                  <div class="field__control field__control--result" id="elastic-control">
+                    <input class="input input--result" id="shareElastic" readonly tabindex="-1" value="—">
+                    <span class="field__unit">%</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Geometric, through the links</label>
+                  <div class="field__control field__control--result">
+                    <input class="input input--result" id="shareGeometric" readonly tabindex="-1" value="—">
+                    <span class="field__unit">%</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Unsprung, through the hubs</label>
+                  <div class="field__control field__control--locked">
+                    <input class="input input--locked" id="shareUnsprung" readonly tabindex="-1" value="—">
+                    <span class="field__unit">%</span>
+                  </div>
+                </div>
+
+                <p class="group__note group__note--screen" id="mechanism-note"></p>
+              </div>
+
+              <div class="group">
+                <h2 class="group__title">Limits</h2>
+
+                <div class="field">
+                  <label class="field__label">Roll gradient
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Degrees of body roll per G. Road cars 3 to 5, fast road 2 to 3, circuit cars 1 to 1.5, downforce cars below 1.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="gradient-control">
+                    <input class="input input--result" id="rollGradient" readonly tabindex="-1" value="—">
+                    <span class="field__unit">&#176;/G</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="field__label">Inner wheel lifts at
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="The cornering g at which the first inner wheel reaches zero load. Beyond it the car is on three wheels and none of these figures apply.">?</button>
+                  </label>
+                  <div class="field__control field__control--result" id="liftg-control">
+                    <input class="input input--result" id="liftG" readonly tabindex="-1" value="—">
+                    <span class="field__unit">G</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group group--trial">
+                <div class="group__head">
+                  <h2 class="group__title">Try a change
+                    <button class="field__help" type="button" aria-label="More about this field"
+                            data-help="Move a rate and watch the front share respond, without touching your baseline inputs above. Steps are catalogue sizes, so anything you land on is a part you could order. Reset returns every slider to the setup you entered.">?</button>
+                  </h2>
+                  <button class="btn btn--secondary btn--icon" type="button" id="trial-reset"
+                          title="Reset the sliders to my setup" aria-label="Reset the sliders to my setup">
+                    <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 12a9 9 0 1 0 3-6.7"/>
+                      <path d="M3 4v5h5"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="trial" id="trial">
+                  <div class="trial__row">
+                    <span class="trial__name">Spring, front</span>
+                    <label class="sr-only" for="trialSpringFront">Trial front spring rate</label>
+                    <input class="range range--slim" type="range" id="trialSpringFront">
+                    <span class="trial__value" id="trialSpringFront-value">—</span>
+                  </div>
+                  <div class="trial__row">
+                    <span class="trial__name">Spring, rear</span>
+                    <label class="sr-only" for="trialSpringRear">Trial rear spring rate</label>
+                    <input class="range range--slim" type="range" id="trialSpringRear">
+                    <span class="trial__value" id="trialSpringRear-value">—</span>
+                  </div>
+                  <div class="trial__row">
+                    <span class="trial__name">Bar, front</span>
+                    <label class="sr-only" for="trialArbFront">Trial front bar rate</label>
+                    <input class="range range--slim" type="range" id="trialArbFront">
+                    <span class="trial__value" id="trialArbFront-value">—</span>
+                  </div>
+                  <div class="trial__row">
+                    <span class="trial__name">Bar, rear</span>
+                    <label class="sr-only" for="trialArbRear">Trial rear bar rate</label>
+                    <input class="range range--slim" type="range" id="trialArbRear">
+                    <span class="trial__value" id="trialArbRear-value">—</span>
+                  </div>
+                </div>
+
+                <p class="group__note group__note--steady" id="trial-note"></p>
+
+              </div>
+            </div>
+
+            <details class="working">
+              <summary class="working__toggle">
+                <span class="section__chevron"></span>
+                Show the working
+              </summary>
+              <div class="working__body" id="working"></div>
+            </details>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="lltd-svg" viewBox="0 0 340 520"
+                   preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-labelledby="lltd-desc">
+                <desc id="lltd-desc">Plan view of the car cornering to the right, with each tyre’s load and, when a trial is active, the trial load beneath it. Below, bars comparing the front share of load transfer with the front share of static weight, and the split of transfer between the three mechanisms.</desc>
+                <g id="lltd-scene"></g>
+              </svg>
+            </div>
+            <p class="trial__print" id="trial-print"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+      <li>Valid only while all four wheels carry load. Past the lift figure shown, none of this applies.</li>
+      <li>The model is linear, so load transfer distribution does not change with lateral G. Real tyres and dampers are not linear.</li>
+      <li>Tyres are rigid. Their vertical stiffness is ignored, which makes the car slightly stiffer in roll than modelled.</li>
+      <li>Unsprung masses and their centres of gravity are per corner.</li>
+      <li>Motion ratios are wheel travel over component travel, taken as constant through the travel.</li>
+      <li>Bar rate is at the arm tip with the other side held. Springs contribute half their wheel rate times track squared to roll stiffness, a bar its full rate, because a bar resists the wheels moving oppositely.</li>
+      <li>Roll centres are taken at ride height and treated as fixed. They migrate as the suspension moves, so geometric transfer is only approximately constant.</li>
+      <li>Steady-state cornering only. No aero load, no transient weight transfer, no compliance in bushes or chassis.</li>
+    </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this calculator at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import { lateralLoadTransfer, explain } from './formula.js';
+  import {
+    toCanonical, fromCanonical, formatValue, convertEditableFields,
+    convertRateFields, RATE_STEPS,
+  } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import {
+    reportHeight, readUrlState, buildShareUrl, copyText,
+  } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const errorBox = document.getElementById('error');
+  const $ = (id) => document.getElementById(id);
+
+  const lengthUnit = () => (form.elements.units.value === 'imperial' ? 'in' : 'mm');
+  const massUnit = () => (form.elements.units.value === 'imperial' ? 'lb' : 'kg');
+
+  /* Rates are their own unit choice: springs and bars are sold in N/mm,
+     kgf/mm and lb/in, two of which are metric. See RATE_UNITS in units.js. */
+  const rateUnit = () => form.elements.rateUnit.value;
+
+  function setUnitLabels() {
+    const imperial = form.elements.units.value === 'imperial';
+    for (const el of document.querySelectorAll('[data-unit="length"]')) {
+      el.textContent = imperial ? 'in' : 'mm';
+    }
+    for (const el of document.querySelectorAll('[data-unit="mass"]')) {
+      el.textContent = imperial ? 'lb' : 'kg';
+    }
+    for (const el of document.querySelectorAll('[data-unit="rate"]')) {
+      el.textContent = rateUnit();
+    }
+  }
+
+  function onUnitChange(previous) {
+    const next = form.elements.units.value;
+    if (next === previous) return next;
+    convertEditableFields(previous, next);
+    setUnitLabels();
+    return next;
+  }
+
+  function readInput() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const len = (id) => toCanonical(Number(form.elements[id].value), L);
+    const mass = (id) => toCanonical(Number(form.elements[id].value), M);
+    const plain = (id) => Number(form.elements[id].value);
+    const rate = (id) => toCanonical(Number(form.elements[id].value), rateUnit());
+    return {
+      wheelbase: len('wheelbase'),
+      trackFront: len('trackFront'),
+      trackRear: len('trackRear'),
+      totalMass: mass('totalMass'),
+      frontMassPercent: plain('frontMassPercent'),
+      unsprungFront: mass('unsprungFront'),
+      unsprungRear: mass('unsprungRear'),
+      cogHeight: len('cogHeight'),
+      unsprungCogFront: len('unsprungCogFront'),
+      unsprungCogRear: len('unsprungCogRear'),
+      // Rates stay in N/mm: they come from the spring and bar calculators,
+      // which are explicit about their own units.
+      springFront: rate('springFront'),
+      springRear: rate('springRear'),
+      arbFront: rate('arbFront'),
+      arbRear: rate('arbRear'),
+      springMrFront: plain('springMrFront'),
+      springMrRear: plain('springMrRear'),
+      arbMrFront: plain('arbMrFront'),
+      arbMrRear: plain('arbMrRear'),
+      rollCentreFront: len('rollCentreFront'),
+      rollCentreRear: len('rollCentreRear'),
+      lateralG: plain('lateralG'),
+    };
+  }
+
+  /* --- Trial rates --------------------------------------------------------
+     The four rates a setup is actually changed with, explored without
+     touching the baseline above. `trial` holds canonical N/mm once a slider
+     has been moved, and null while a rate still follows its input, so
+     editing the car resets the experiment rather than leaving a stale one
+     on screen.
+
+     Sliders step in catalogue sizes, so anything landed on is a part that
+     can be ordered. An unrounded slider proposes springs that do not
+     exist. */
+  const TRIALS = [
+    ['trialSpringFront', 'springFront'],
+    ['trialSpringRear', 'springRear'],
+    ['trialArbFront', 'arbFront'],
+    ['trialArbRear', 'arbRear'],
+  ];
+
+  let trial = { springFront: null, springRear: null, arbFront: null, arbRear: null };
+
+  const clearTrial = () => { trial = { springFront: null, springRear: null, arbFront: null, arbRear: null }; };
+
+  /* Each slider spans roughly +/- 40% of the entered rate, in whole steps of
+     the selected unit, with at least a few steps either side so there is
+     always somewhere to go. */
+  function sliderRange(canonical, unit) {
+    const step = RATE_STEPS[unit] ?? 1;
+    const centre = Math.round(fromCanonical(canonical, unit) / step);
+    const span = Math.max(4, Math.round(centre * 0.4));
+    return { step, min: Math.max(1, centre - span), max: centre + span, centre };
+  }
+
+  function render() {
+    const L = lengthUnit();
+    const M = massUnit();
+    const input = readInput();
+    const len = (v) => formatValue(fromCanonical(v, L), { decimals: L === 'in' ? 2 : 0 });
+    const mass = (v) => formatValue(fromCanonical(v, M), { decimals: 1 });
+    const pct = (v) => formatValue(v, { decimals: 2 });
+
+    try {
+      const r = lateralLoadTransfer(input);
+
+      $('lltd').textContent = pct(r.lltd);
+      // Rear share omitted: it is 100 minus the front, and the line it cost
+      // was pushing the sheet onto a second page.
+      $('lltd-alt').textContent = `static front weight ${pct(input.frontMassPercent)}%`;
+
+      /* Change from the baseline, when one has been entered. */
+      const baseline = Number(form.elements.baselineLltd.value);
+      const hasBaseline = form.elements.baselineLltd.value !== '' && Number.isFinite(baseline);
+      const move = r.lltd - baseline;
+      $('move-body').hidden = !hasBaseline;
+      if (hasBaseline) {
+        $('move').textContent = (move >= 0 ? '+' : '') + formatValue(move, { decimals: 2 });
+        $('move-alt').textContent = Math.abs(move) < 0.05
+          ? `unchanged from your ${pct(baseline)}% baseline`
+          : `from ${pct(baseline)}%. Transfer moved ${move > 0 ? 'forward' : 'rearward'}`;
+      }
+
+      $('shareElastic').value = pct(r.shareElastic);
+      $('shareGeometric').value = pct(r.shareGeometric);
+      $('shareUnsprung').value = pct(r.shareUnsprung);
+      $('rollGradient').value = formatValue(r.rollGradient, { decimals: 2 });
+      $('liftG').value = r.liftG === undefined ? '—' : formatValue(r.liftG, { decimals: 2 });
+
+      // A small elastic share means springs and bars have little authority.
+      $('elastic-control').classList.remove('field__control--caution');
+      if (r.shareElastic < 50) $('elastic-control').classList.add('field__control--caution');
+
+      $('gradient-control').classList.remove('field__control--caution', 'field__control--warn');
+      if (r.rollGradient > 4) $('gradient-control').classList.add('field__control--warn');
+      else if (r.rollGradient > 2.5) $('gradient-control').classList.add('field__control--caution');
+
+      $('mechanism-note').textContent =
+        `Springs and bars control ${pct(r.shareElastic)}% of the transfer. `
+        + (r.shareElastic < 50
+          ? 'That is a small share, so expect the spring and bar sliders to have modest effect. The roll centres and unsprung mass are doing most of the work.'
+          : 'That is the usual case, so the sliders below will have real authority.');
+
+      // --- trial sliders, and the setup they describe ---
+      const R = rateUnit();
+      const rateStr = (v) => formatValue(fromCanonical(v, R), { decimals: R === 'lb/in' ? 0 : 1 });
+      const trialInput = { ...input };
+      let moved = false;
+
+      for (const [sliderId, key] of TRIALS) {
+        const el = $(sliderId);
+        const range = sliderRange(input[key], R);
+        el.min = String(range.min);
+        el.max = String(range.max);
+        el.step = '1';
+
+        const steps = trial[key] === null
+          ? range.centre
+          : Math.round(fromCanonical(trial[key], R) / range.step);
+        const position = Math.min(range.max, Math.max(range.min, steps));
+        el.value = String(position);
+
+        /* Whether a slider has been moved is a question about its position,
+           not its value: snapping 98 N/mm to a round 10.0 kgf/mm shifts the
+           value by 0.07 without anybody touching anything, which read as a
+           change and left the trial card showing at rest. */
+        const same = position === range.centre;
+        if (!same) moved = true;
+
+        /* At rest a rate stays exactly as entered, so a trial differs only
+           in what was actually moved. */
+        trialInput[key] = same ? input[key] : toCanonical(position * range.step, R);
+
+        const shown = position * range.step;
+        const deltaSteps = position - range.centre;
+        const out = $(`${sliderId}-value`);
+        out.classList.toggle('trial__value--same', same);
+        /* The delta line is always rendered, blank when unchanged, so a row
+           keeps its height and the panel does not shift under the slider
+           being dragged. */
+        const deltaText = same ? '\u00A0'
+          : `${deltaSteps > 0 ? '+' : '\u2212'}`
+            + formatValue(Math.abs(deltaSteps * range.step), { decimals: R === 'lb/in' ? 0 : 1 });
+        out.innerHTML = `${formatValue(shown, { decimals: R === 'lb/in' ? 0 : 1 })} ${R}`
+          + `<span class="trial__delta">${deltaText}</span>`;
+      }
+
+      /* On paper the sliders are meaningless. What matters is the figures
+         they were sitting at. One line, so a printed sheet does not carry
+         four controls nobody can move. */
+      $('trial-print').textContent = 'Rates: '
+        + TRIALS.map(([id, key]) => `${id.replace('trial', '').replace(/([A-Z])/g, ' $1').trim().toLowerCase()} `
+          + `${formatValue(fromCanonical(trialInput[key], R), { decimals: R === 'lb/in' ? 0 : 1 })}`).join(' \u00B7 ')
+        + ` ${R}`;
+
+      /* The trial sits in the readout beside the setup and is always
+         present. Hiding it until a slider moved made the page change shape
+         underneath whoever was moving the slider. At rest it simply reads
+         the same as the setup. */
+      let trialResult = null;
+      if (!moved) {
+        $('trialLltd').textContent = pct(r.lltd);
+        $('trialLltd-alt').textContent = 'matches your setup';
+        $('trial-note').textContent =
+          'Move a slider to try a rate against your setup. Steps are catalogue sizes.';
+      } else {
+        const t = lateralLoadTransfer(trialInput);
+        trialResult = t;
+        const shift = t.lltd - r.lltd;
+        $('trialLltd').textContent = pct(t.lltd);
+        $('trialLltd-alt').textContent =
+          `${(shift >= 0 ? '+' : '\u2212')}${formatValue(Math.abs(shift), { decimals: 2 })} pts `
+          + `${shift > 0.005 ? 'forward' : shift < -0.005 ? 'rearward' : 'unchanged'}`;
+        $('trial-note').textContent = t.liftG === undefined
+          ? 'This trial has no valid lift limit. Check the inner wheel loads.'
+          : `Roll gradient ${formatValue(t.rollGradient, { decimals: 2 })}°/g, inner wheel lifts at ${formatValue(t.liftG, { decimals: 2 })} G. Your inputs are unchanged. Reset, or copy these rates up to make them your baseline.`;
+      }
+
+      // --- has an inner wheel left the ground? ---
+      if (r.liftedWheel) {
+        $('lift-notice').textContent =
+          `The ${r.liftedWheel} wheel has left the ground at ${formatValue(input.lateralG, { decimals: 2 })} G. `
+          + `Every figure here assumes four loaded wheels, so reduce the lateral G to `
+          + `${formatValue(r.liftG, { decimals: 2 })} G or below, or stiffen the other axle.`;
+        $('lift-notice').hidden = false;
+      } else {
+        $('lift-notice').hidden = true;
+      }
+
+      $('liftg-control').classList.remove('field__control--caution', 'field__control--warn');
+      if (r.liftG !== undefined && r.liftG <= input.lateralG) {
+        $('liftg-control').classList.add('field__control--warn');
+      } else if (r.liftG !== undefined && r.liftG < input.lateralG * 1.15) {
+        $('liftg-control').classList.add('field__control--caution');
+      }
+
+      drawDiagram(input, r, trialResult);
+      renderWorking($('working'), explain(input, r, (v) => formatValue(v, { decimals: 2 })));
+      errorBox.hidden = true;
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      $('lift-notice').hidden = true;
+      for (const id of ['lltd', 'trialLltd']) $(id).textContent = '—';
+      for (const id of ['lltd-alt', 'trialLltd-alt', 'mechanism-note']) $(id).textContent = '';
+      for (const id of ['shareElastic', 'shareGeometric', 'shareUnsprung', 'rollGradient',
+                        'liftG']) {
+        $(id).value = '—';
+      }
+      $('trial-note').textContent = '';
+      $('lltd-scene').innerHTML = '';
+      renderWorking($('working'), []);
+    }
+
+    updateSheet(form, { unitLabel: L === 'in' ? 'inch' : 'mm' });
+  }
+
+  /* --- Diagram ------------------------------------------------------------
+     Two comparisons, because the numbers alone don't show either.
+
+     The first is the one that decides balance: front share of transfer
+     against front share of weight. Seeing the two bars misaligned says
+     "the rear is working harder" faster than reading 52.34 against 55.4.
+
+     The second is the mechanism split, which tells you whether springs and
+     bars have any authority here.
+
+     Layout budget stated, not guessed. */
+
+  /* --- Diagram ------------------------------------------------------------
+     A plan view of the car mid-corner above the two bar charts.
+
+     The car view carries what bars cannot: which end is which, which way the
+     corner goes, and which four tyres are actually carrying the load. What it
+     deliberately does NOT do is place a marker for the transfer split along
+     the wheelbase. At true scale a three-point change in LLTD moves such a
+     marker about three units, which is invisible, and exaggerating it to be
+     visible would misrepresent it. The bars below handle the comparison,
+     where a 50% reference line makes a point and a half obvious.
+
+     Turning right, so inertia throws load onto the left-hand wheels: those
+     are the outside pair and they are drawn loaded.
+   */
+
+  const VIEW = { w: 340, h: 520 };
+
+  function drawDiagram(input, r, trial) {
+    const scene = $('lltd-scene');
+    const n = (v) => Number(v.toFixed(2));
+    const pct = (v) => formatValue(v, { decimals: 1 });
+    const M = massUnit();
+    const load = (v) => formatValue(fromCanonical(v, M), { decimals: 0 });
+
+    /* ---------- plan view, front at top ---------- */
+    const carTop = 30;
+    const maxTrack = Math.max(input.trackFront, input.trackRear);
+    const carScale = Math.min(150 / (maxTrack * 1.3), 128 / input.wheelbase);
+    const cx = 141;       // centred on the bars below, not on the viewBox
+    const axleF = carTop + 26;
+    const axleR = axleF + input.wheelbase * carScale;
+    const halfF = (input.trackFront / 2) * carScale;
+    const halfR = (input.trackRear / 2) * carScale;
+    const bodyHalf = maxTrack * 0.44 * carScale;
+    const tail = axleR + 24;
+
+    const w = r.wheelLoads;
+    const tw = trial === null ? null : trial.wheelLoads;
+    const STEER = 17;               // degrees of front wheel angle
+
+    // outside wheels are the left-hand pair, so they carry the transferred load
+    const wheel = (x, y, outside, steer) => `
+      <g transform="translate(${n(x)} ${n(y)})${steer ? ` rotate(${steer})` : ''}">
+        <rect class="${outside ? 'diagram__tyre--loaded' : 'diagram__tyre'}"
+              x="-4.5" y="-9" width="9" height="18" rx="2.5"/>
+      </g>`;
+
+    /* Each tyre shows its load, and when a trial is live the trial load
+       under it. Space is reserved either way so the car does not reflow. */
+    const tyreLabel = (x, y, anchor, now, next) => `
+      <text class="diagram__value" x="${n(x)}" y="${n(y - 1)}" text-anchor="${anchor}">${load(now)}</text>
+      <text class="diagram__trial-label" x="${n(x)}" y="${n(y + 12)}" text-anchor="${anchor}">${
+        next === null || next === undefined ? '\u00A0' : load(next)}</text>`;
+
+    const body = `
+      M ${n(cx - bodyHalf * 0.52)} ${carTop}
+      C ${n(cx - bodyHalf * 0.9)} ${n(carTop + 10)} ${n(cx - bodyHalf)} ${n(axleF + 6)} ${n(cx - bodyHalf)} ${n(axleF + 18)}
+      L ${n(cx - bodyHalf)} ${n(axleR - 10)}
+      C ${n(cx - bodyHalf)} ${n(tail - 6)} ${n(cx - bodyHalf * 0.9)} ${n(tail)} ${n(cx - bodyHalf * 0.62)} ${n(tail)}
+      L ${n(cx + bodyHalf * 0.62)} ${n(tail)}
+      C ${n(cx + bodyHalf * 0.9)} ${n(tail)} ${n(cx + bodyHalf)} ${n(tail - 6)} ${n(cx + bodyHalf)} ${n(axleR - 10)}
+      L ${n(cx + bodyHalf)} ${n(axleF + 18)}
+      C ${n(cx + bodyHalf)} ${n(axleF + 6)} ${n(cx + bodyHalf * 0.9)} ${n(carTop + 10)} ${n(cx + bodyHalf * 0.52)} ${carTop}
+      Z`;
+
+    /* The path ahead, bending the way the front wheels are pointing. SVG
+       rotate() is clockwise with front at top, so +STEER steers right and
+       the arc must move toward +x as it goes forward. The first version
+       curved left while the wheels pointed right. */
+    const arc = `
+      M ${n(cx - 6)} ${n(axleR + 10)}
+      Q ${n(cx + 12)} ${n(axleF - 6)} ${n(cx + bodyHalf + 34)} ${n(carTop - 14)}`;
+
+    const carView = `
+      <text class="diagram__label" x="${n(cx)}" y="${n(carTop - 20)}" text-anchor="middle">front</text>
+      <path class="diagram__arrow" d="M ${n(cx)} ${n(carTop - 14)} l -4 7 l 8 0 Z"/>
+
+      <!-- the line through the corner, under the car: the car is on this
+           path, so it necessarily crosses the body -->
+      <path class="diagram__arc" d="${arc}"/>
+      <path class="diagram__shell" d="${body}"/>
+      ${wheel(cx - halfF, axleF, true, STEER)}${wheel(cx + halfF, axleF, false, STEER)}
+      ${wheel(cx - halfR, axleR, true, 0)}${wheel(cx + halfR, axleR, false, 0)}
+
+      <!-- the load thrown outboard by the corner -->
+      <text class="diagram__value" x="${n(cx + bodyHalf + 40)}" y="${n(carTop + 2)}">turn</text>
+
+      <line class="diagram__dim" x1="${n(cx)}" y1="${n((axleF + axleR) / 2)}"
+            x2="${n(cx - bodyHalf - 18)}" y2="${n((axleF + axleR) / 2)}"/>
+      <path class="diagram__arrow" d="M ${n(cx - bodyHalf - 18)} ${n((axleF + axleR) / 2)} l 7 -4 l 0 8 Z"/>
+      <circle class="diagram__cog" cx="${n(cx)}" cy="${n((axleF + axleR) / 2)}" r="4"/>
+      <text class="diagram__value" x="${n(cx - bodyHalf - 22)}" y="${n((axleF + axleR) / 2 - 7)}" text-anchor="end">${formatValue(input.lateralG, { decimals: 2 })} G</text>
+
+      <!-- what each tyre is carrying, with the trial beneath it in amber so
+           a slider move is visible on the car and not only on the bars -->
+      ${tyreLabel(cx - halfF - 12, axleF, 'end', w.frontOuter, tw && tw.frontOuter)}
+      ${tyreLabel(cx + halfF + 12, axleF, 'start', w.frontInner, tw && tw.frontInner)}
+      ${tyreLabel(cx - halfR - 12, axleR, 'end', w.rearOuter, tw && tw.rearOuter)}
+      ${tyreLabel(cx + halfR + 12, axleR, 'start', w.rearInner, tw && tw.rearInner)}
+      <text class="diagram__value" x="${n(cx - bodyHalf - 8)}" y="${n(tail + 16)}" text-anchor="end">outside</text>
+      <text class="diagram__value" x="${n(cx + bodyHalf + 8)}" y="${n(tail + 16)}">inside</text>
+    `;
+
+    /* ---------- bars, below the car ---------- */
+    const left = 16;
+    const barW = 250;
+    const barH = 26;
+    const base = 236;                     // clear air between car and bars
+
+    const pair = [
+      { y: base + 42, label: 'transfer', value: r.lltd, accent: true },
+      { y: base + 82, label: 'weight', value: input.frontMassPercent, accent: false },
+    ];
+
+    const pairBars = pair.map(({ y, label, value, accent }) => `
+      <text class="diagram__value" x="${left}" y="${n(y - 6)}">${label}</text>
+      <rect class="diagram__body" x="${left}" y="${n(y)}" width="${barW}" height="${barH}" rx="3"/>
+      <rect class="${accent ? 'diagram__aero' : 'diagram__fillbar'}" x="${left}" y="${n(y)}"
+            width="${n(barW * value / 100)}" height="${barH}" rx="3"/>
+      <text class="diagram__value" x="${n(left + barW + 8)}" y="${n(y + barH / 2 + 4)}">${pct(value)}%</text>`).join('');
+
+    /* A trial appears as a tick on the transfer bar, which is where a couple
+       of points is actually legible. */
+    const trialFront = trial === null ? null : trial.lltd;
+    const trialTick = trialFront === null ? '' : `
+      <line class="diagram__trial-tick" x1="${n(left + barW * trialFront / 100)}" y1="${n(base + 36)}"
+            x2="${n(left + barW * trialFront / 100)}" y2="${n(base + 42 + barH + 4)}"/>
+      <text class="diagram__trial-label" x="${n(left + barW * trialFront / 100)}" y="${n(base + 30)}"
+            text-anchor="middle">trial ${pct(trialFront)}%</text>`;
+
+    const midX = left + barW * 0.5;
+
+    const mechY = base + 176;
+    const mech = [
+      { label: 'elastic', value: r.shareElastic, cls: 'diagram__aero' },
+      { label: 'geometric', value: r.shareGeometric, cls: 'diagram__fillbar' },
+      { label: 'unsprung', value: r.shareUnsprung, cls: 'diagram__fillbar--faint' },
+    ];
+    let x = left;
+    const stack = mech.map((m) => {
+      const seg = `<rect class="${m.cls}" x="${n(x)}" y="${mechY}" width="${n(Math.max(0, (barW * m.value) / 100))}" height="${barH}" rx="2"/>`;
+      x += (barW * m.value) / 100;
+      return seg;
+    }).join('');
+
+    const legend = mech.map((m, i) => `
+      <rect class="${m.cls}" x="${left}" y="${n(mechY + 44 + i * 20)}" width="12" height="9" rx="2"/>
+      <text class="diagram__value" x="${n(left + 18)}" y="${n(mechY + 52 + i * 20)}">${m.label} ${pct(m.value)}%</text>`).join('');
+
+    scene.innerHTML = `
+      ${carView}
+
+      <text class="diagram__label" x="${left}" y="${n(base + 20)}">front share</text>
+      ${pairBars}
+      ${trialTick}
+      <line class="diagram__crank" x1="${n(midX)}" y1="${n(base + 34)}" x2="${n(midX)}" y2="${n(base + 82 + barH + 6)}"/>
+      <text class="diagram__value" x="${n(midX)}" y="${n(base + 82 + barH + 20)}" text-anchor="middle">50%</text>
+
+      <text class="diagram__label" x="${left}" y="${n(mechY - 12)}">transfer by mechanism</text>
+      <rect class="diagram__body" x="${left}" y="${mechY}" width="${barW}" height="${barH}" rx="3"/>
+      ${stack}
+      ${legend}
+    `;
+  }
+
+  let currentUnit = form.elements.units.value;
+  let currentRateUnit = form.elements.rateUnit.value;
+
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'units') currentUnit = onUnitChange(currentUnit);
+    if (event.target.name === 'rateUnit') {
+      convertRateFields(currentRateUnit, event.target.value);
+      currentRateUnit = event.target.value;
+      setUnitLabels();
+    }
+    render();
+  });
+  /* A slider move is a trial; editing anything else is a change of setup,
+     which retires the trial rather than leaving a stale one on screen. */
+  const TRIAL_IDS = new Set(TRIALS.map(([id]) => id));
+
+  form.addEventListener('input', (event) => {
+    if (TRIAL_IDS.has(event.target.id)) {
+      const key = TRIALS.find(([id]) => id === event.target.id)[1];
+      const R = rateUnit();
+      trial[key] = toCanonical(Number(event.target.value) * (RATE_STEPS[R] ?? 1), R);
+    } else if (event.target.name !== 'setup') {
+      clearTrial();
+    }
+    render();
+  });
+
+  $('trial-reset').addEventListener('click', () => {
+    clearTrial();
+    render();
+  });
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed. Select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this setup');
+      button.setAttribute('title', 'Copy a link to this setup');
+    }, 2000);
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  currentUnit = form.elements.units.value;
+  setUnitLabels();
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>
