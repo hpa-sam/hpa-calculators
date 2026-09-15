@@ -17,7 +17,7 @@
    default, or the assumptions text. Not for typo fixes.
    ========================================================================== */
 
-export const BUILD = '2026.10.7';
+export const BUILD = '2026.10.12';
 
 /** Stamps the build into every [data-build] element. */
 export function showBuild(root = document) {

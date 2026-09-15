@@ -70,6 +70,16 @@
   --field-trial-border:  #E8B94E;
   --field-trial-ink:     #6B4E10;
 
+  /* Up to six overlaid series on one plot. Chosen to stay apart for the
+     common forms of colour blindness, since the shapes sit on top of one
+     another and a legend is the only other way to tell them apart. */
+  --series-1: #1F5FA8;
+  --series-2: #D97706;
+  --series-3: #0F766E;
+  --series-4: #9333EA;
+  --series-5: #BE123C;
+  --series-6: #4D7C0F;
+
   /* The line under judgement on a plot. Blue, because it has to be legible
      against every zone colour and distinct from the black optimal line it is
      being compared with. */

@@ -897,6 +897,84 @@ check that a transposed aspect ratio. 45 for 55, quietly worth 24mm. Was
 caught. Rod ratio stayed, renamed **Rod:Stroke**, because engine builders
 quote it alongside Bore:Stroke.
 
+**Check the claim before correcting the data.** I told the client PEEK and
+PEKK heat figures were wrong and that published HDT at 0.45 MPa was around
+315 degrees. Searching the datasheets showed otherwise: unfilled PEEK HDT is
+152 degrees, and PEKK as sold for filament is the amorphous A grade at 154.
+The source was close on both. Only PEI was genuinely wrong, and in a way I
+had not spotted: it is amorphous, so the 220 degree melting point was a
+Vicat softening figure and it has no melting point at all.
+
+**Two right numbers can still make a wrong comparison.** Heat resistance was
+rated on deflection temperature, which is quoted at 0.45 MPa for the nylons
+and 1.8 MPa for the high performance materials. Both figures are correct and
+the comparison between them is not: on the mix, PA66 outranked PEEK. The
+rating now uses glass transition, which is one test reported the same way
+for all nineteen, and the order reads true: PEI, PEKK, PC, PEEK. Deflection
+temperature stays in the table as a figure, just not as the basis of a bar.
+
+**Print renders at 661 pixels, so a bare max-width query catches it.** Two
+mobile rules written as `@media (max-width: 700px)` applied to the printed
+sheet as well, wrapping section headers and reordering the results columns.
+Both runtime print checks caught it within a minute of the rules landing.
+Small-screen rules are now `@media screen and (max-width: ...)`.
+
+**A details element cannot be forced open from CSS.** The filament guide
+keeps its detail figures behind a toggle so a phone is not twenty-three rows
+deep, but a printed cheat sheet is worth nothing without them. Chrome hides
+the content of a closed `details` through `::details-content`, which
+overriding `display` does not reach, so the print stylesheet had no way in.
+The panel is now a button and a class, styled to look and behave the same,
+which the print stylesheet can simply open. The screen keeps its toggle and
+the sheet carries all twenty-three rows.
+
+**On a phone, put the picture first and the table behind a toggle.** The
+filament guide at 390px was 3,185 pixels tall, scrolled the whole document
+151px sideways, and buried the radar 2,622px down under a 23-row table. The
+radar now leads on narrow screens through an order property rather than a
+second copy of the markup; the table carries five rows that decide a choice
+and the other thirteen sit behind "All the figures"; and the label column is
+sticky so a row is still identifiable six columns along. 3,185 to 2,327
+pixels, and no document-level sideways scroll at any width.
+
+**A switch that scrolls hides its first option.** Making the five-way sort
+control scroll horizontally on a phone put "by family", the default, off the
+left edge with nothing to suggest it was there. Wrapped onto a second line
+instead, all five are visible.
+
+**Every axis on a radar has to point the same way.** Printability joined the
+plot as a fifth axis, and it could not go on as measured. The plot says
+underneath that the outer edge is best in the guide, so drawing difficulty
+outward would have made the hardest material the biggest shape, and a reader
+takes in shape before any label. The axis is ease, the inverse, scaled
+against the most demanding material in the guide rather than a fixed number,
+so adding a harder filament rescales the axis instead of pushing a shape
+past the outer ring.
+
+**A radar says what a material is; a bar says what it scores.** Four axes
+overlaid shows the trade each material represents, and two shapes on top of
+each other show where they differ without reading a number. Held to four
+axes deliberately: radar plots mislead as axes multiply, because the area
+enclosed grows with the square of the values and with the order the axes
+happen to sit in, and a reader sees area.
+
+**A reference page is not a calculator, and the contract should say so.**
+The filament guide presents a dataset to compare rather than computing a
+figure from inputs. It has no unit system and no live readout, so three
+structure checks written for calculators did not apply. Rather than weaken
+them for everyone, the page declares `data-kind="reference"` and those three
+checks read the flag. The exemption is visible in the markup, scoped to the
+pages that carry it, and every other check still applies.
+
+**Scale a comparison against the field, not against the selection.** The
+guide's bars are scaled against the highest value among all nineteen
+materials. Scaling against the current selection would fill every bar when
+three mid-range materials are compared and suggest they were all excellent,
+and the picture would change whenever a material was added or removed.
+Ductility is the exception and is logarithmic: elongation runs from 2 to 400
+percent, and on a linear scale every rigid material sits within a pixel of
+zero.
+
 **Dead code accumulates behind every replaced feature.** Sweeping after the
 brake plot was rebuilt three times and the valve control twice found seven
 stylesheet rules, three exported functions and three design tokens with no

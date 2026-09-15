@@ -97,6 +97,13 @@ for (const name of dirs) {
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
   const markup = html.replace(/<script type="module">[\s\S]*?<\/script>/, '');
 
+  /* Some pages are reference material rather than calculators: they present
+     a dataset to compare instead of computing a figure from inputs. They
+     carry no unit system and no live readout, so a few of the checks below
+     do not apply. Declared in the markup rather than inferred, so the
+     exemption is visible on the page and cannot quietly spread. */
+  const isReference = /data-kind="reference"/.test(markup);
+
   /* ---- 1. Block nesting balances -------------------------------------------
      The bug that broke the belt layout: one extra </div> closed
      .results__main early, so the diagram rendered outside the grid and
@@ -119,7 +126,7 @@ for (const name of dirs) {
   const mainCount = (markup.match(/class="results__main"/g) || []).length;
   const sideCount = (markup.match(/class="results__side"/g) || []).length;
 
-  check(at('has a results grid'), resultsCount >= 1);
+  check(at('has a results grid'), isReference || resultsCount >= 1);
   check(at('one results__main per results grid'), mainCount === resultsCount,
     `${resultsCount} grids, ${mainCount} mains`);
   check(at('at most one results__side per grid'), sideCount <= resultsCount);
@@ -227,7 +234,10 @@ for (const name of dirs) {
   /* ---- 7. Print sheet ----------------------------------------------------
      A printout that cannot identify itself is useless in a binder. */
 
-  for (const id of ['sheet-setup', 'sheet-units', 'sheet-date']) {
+  const sheetIds = isReference
+    ? ['sheet-setup', 'sheet-date']     // no unit system on a reference page
+    : ['sheet-setup', 'sheet-units', 'sheet-date'];
+  for (const id of sheetIds) {
     check(at(`print header has #${id}`), idSet.has(id));
   }
   check(at('print header has a title'), markup.includes('sheet__title'));
@@ -236,7 +246,7 @@ for (const name of dirs) {
 
   /* ---- 8. Accessibility basics ------------------------------------------- */
 
-  check(at('readout announces changes'), /class="readout[^"]*"[^>]*aria-live|aria-live[^>]*class="readout/.test(markup)
+  check(at('readout announces changes'), isReference || /class="readout[^"]*"[^>]*aria-live|aria-live[^>]*class="readout/.test(markup)
     || /<output[^>]*aria-live/.test(markup));
 
   const numberInputs = [...markup.matchAll(/<input[^>]*type="number"[^>]*>/g)].map((m) => m[0]);

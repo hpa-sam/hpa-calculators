@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Printing Filament Guide | High Performance Academy</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/calculator.css">
+</head>
+<body>
+
+<div class="calc" data-kind="reference">
+
+  <div class="sheet">
+    <div>
+      <h2 class="sheet__title">3D Printing Filament Guide</h2>
+      <p class="sheet__intro">Mechanical properties and print settings, side by side.</p>
+    </div>
+    <div class="sheet__meta">
+      <p class="sheet__brand">High Performance Academy</p>
+      <span class="sheet__setup" id="sheet-setup"></span>
+      <span class="sheet__row">Printed <span id="sheet-date"></span></span>
+    </div>
+  </div>
+
+  <header class="calc__head">
+    <div>
+      <h1 class="calc__title">3D Printing Filament Guide</h1>
+      <p class="calc__intro">
+        Nineteen filaments with their published mechanical figures and the
+        print settings that go with them. Pick the ones you are choosing
+        between and compare them directly.
+      </p>
+    </div>
+    <div class="calc__tools">
+      <label class="setup">
+        <span class="setup__label">Setup</span>
+        <input class="setup__input" type="text" id="setup" name="setup" form="form"
+               maxlength="60" placeholder="e.g. Intake manifold">
+      </label>
+      <button class="btn btn--secondary btn--icon" type="button" id="share"
+              title="Copy a link to this comparison" aria-label="Copy a link to this comparison">
+        <svg class="btn__glyph btn__glyph--idle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/>
+          <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/>
+        </svg>
+        <svg class="btn__glyph btn__glyph--done" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </button>
+      <button class="btn btn--primary btn--icon" type="button" id="print"
+              title="Print or save as PDF" aria-label="Print or save as PDF">
+        <svg class="btn__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 9V3h10v6"/>
+          <path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/>
+          <rect x="7" y="15" width="10" height="6" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <details class="guide-panel">
+    <summary class="guide-panel__toggle">
+      <span class="section__chevron"></span>
+      How to use this
+    </summary>
+    <div class="guide-panel__body">
+      <div class="guide">
+        <p class="guide__lead">
+          Choosing a filament is a set of trades, not a ranking. The strongest
+          materials are the hardest to print, the toughest are the least
+          stiff, and the cheapest does most jobs perfectly well.
+        </p>
+        <ol class="guide__steps">
+          <li><strong>Start from the part, not the material.</strong> What
+            will break it? A bracket that flexes wants stiffness. A clip that
+            snaps wants ductility. Something near a turbo wants heat
+            resistance. That decides which bar you read first.</li>
+          <li><strong>Shortlist across families.</strong> Comparing four
+            nylons tells you less than comparing a nylon, a carbon filled
+            grade and PETG, because the differences between families are far
+            larger than within one.</li>
+          <li><strong>Check what it takes to print.</strong> The printability
+            line is the one that decides whether a material is realistic on
+            the machine you own. A material needing an enclosure and a 350
+            degree hotend is not a choice if you have neither.</li>
+          <li><strong>Read the bars as relative, the numbers as absolute.</strong>
+            Bars are scaled against the strongest material in the guide, so
+            they show where a material sits in the field. The figures below
+            them are the published values. The radar adds ease of printing
+            as a fifth axis, so a shape shows the whole trade at once.</li>
+          <li><strong>Treat the figures as typical, not as a datasheet.</strong>
+            These are representative of each family. Two brands of PETG can
+            differ by more than PETG differs from PLA, and printed parts are
+            weaker than moulded test bars in the layer direction.</li>
+        </ol>
+        <p class="guide__note">
+          Nothing here accounts for layer adhesion, which is usually what
+          actually fails on a printed part. A material that is strong across
+          the layers can still split along them.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <form id="form" novalidate>
+
+    <div class="section section--screen">
+      <div class="section__header">
+        <span>Choose filaments</span>
+        <span class="switch-set">
+          <span class="unit-switch">
+            <label>
+              <input class="unit-switch__radio" type="radio" name="sortBy" value="family" checked>
+              <span class="unit-switch__label">by family</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="sortBy" value="strength">
+              <span class="unit-switch__label">strength</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="sortBy" value="stiffness">
+              <span class="unit-switch__label">stiffness</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="sortBy" value="ductility">
+              <span class="unit-switch__label">ductility</span>
+            </label>
+            <label>
+              <input class="unit-switch__radio" type="radio" name="sortBy" value="heat">
+              <span class="unit-switch__label">heat</span>
+            </label>
+          </span>
+        </span>
+      </div>
+
+      <div class="section__body">
+        <div class="notice" id="error" role="alert" hidden></div>
+        <input type="hidden" id="picked" name="picked">
+        <div class="picker" id="picker"></div>
+        <p class="picker__note" id="picker-note"></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header section__header--result">Comparison</div>
+      <div class="section__body">
+
+        <div class="notice" id="warnings" role="status" hidden></div>
+
+        <div class="results">
+          <div class="results__main">
+
+        <div class="table-wrap">
+          <table class="table table--compare" id="compare">
+            <thead><tr id="compare-head"></tr></thead>
+            <tbody id="compare-body"></tbody>
+          </table>
+        </div>
+
+          </div>
+
+          <div class="results__side">
+            <div class="diagram">
+              <svg class="diagram__svg diagram__svg--tall" id="radar-svg" viewBox="0 0 340 360"
+                   preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="radar-desc">
+                <desc id="radar-desc">The four rated properties of each selected filament, drawn as overlapping shapes so the shape of a material can be compared at a glance.</desc>
+                <g id="radar-scene"></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclose" id="figures">
+          <button class="disclose__toggle" type="button" id="figures-toggle"
+                  aria-expanded="false" aria-controls="figures-body">
+            <span class="section__chevron"></span>
+            All the figures
+          </button>
+          <div class="disclose__body" id="figures-body">
+            <div class="table-wrap">
+              <table class="table table--compare" id="detail">
+                <thead><tr id="detail-head"></tr></thead>
+                <tbody id="detail-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <details class="working">
+          <summary class="working__toggle">
+            <span class="section__chevron"></span>
+            How the bars are worked out
+          </summary>
+          <div class="working__body" id="working"></div>
+        </details>
+
+      </div>
+    </div>
+  </form>
+
+  <footer class="calc__footer">
+    <details class="assumptions">
+      <summary class="assumptions__toggle">
+        <span class="section__chevron"></span>
+        Assumptions and limits
+      </summary>
+      <ul class="assumptions__list">
+        <li>Figures are typical published values for each family, not a
+          particular brand. Spools vary, sometimes by more than the gap
+          between two families.</li>
+        <li>They come from moulded test specimens. A printed part is weaker,
+          and much weaker across the layers, which is where most printed
+          parts actually fail.</li>
+        <li>Strength and stiffness bars average the tensile and bending
+          figures, since a printed part is usually loaded both ways.</li>
+        <li>Bars are scaled against the highest value in the guide, not
+          against your selection, so a bar means the same thing whichever
+          materials are on screen.</li>
+        <li>Ductility is scaled logarithmically. Elongation runs from 2% to
+          400%, and on a linear scale every rigid material would sit at
+          zero.</li>
+        <li>Heat resistance is rated on glass transition, the point at which
+          a printed part starts losing stiffness. Deflection temperature is
+          in the table too, but datasheets quote it at two different loads,
+          so it is not comparable across the whole set.</li>
+        <li>Impact strength is missing for the nylons and the high
+          performance materials, and overview text for the carbon filled and
+          high performance sets, because the source had no figures.</li>
+        <li>PEI, PEEK and PEKK figures were corrected against published
+          datasheets. PEI is amorphous and has no melting point.</li>
+        <li>Printability is derived from the drying, enclosure and
+          temperature requirements. It is a guide to what the machine needs,
+          not a measure of how well the material prints.</li>
+        <li>On the radar it appears inverted, as ease, so that outward means
+          better on every axis. It is scaled against the most demanding
+          material in the guide.</li>
+        <li>Nothing here covers cost, availability, UV stability, chemical
+          compatibility or food safety.</li>
+      </ul>
+    </details>
+    <p class="calc__disclaimer">
+      Some assumptions, simplifications and limitations apply to these
+      figures. For the full list, open this guide at
+      <span class="print-url" data-sheet-url></span>
+    </p>
+    <p class="calc__build">Build <span data-build></span></p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import {
+    MATERIALS, RATED, RADAR_AXES, FAMILIES, KEY_ROWS, DETAIL_ROWS,
+    ratings, figures, rankedBy, difficulty, ease,
+  } from './formula.js';
+  import { formatValue } from '../../shared/units.js';
+  import { renderWorking } from '../../shared/working.js';
+  import { initFieldHelp } from '../../shared/help.js';
+  import { showBuild } from '../../shared/version.js';
+  import { updateSheet } from '../../shared/sheet.js';
+  import { reportHeight, readUrlState, buildShareUrl, copyText } from '../../shared/embed.js';
+
+  const form = document.getElementById('form');
+  const $ = (id) => document.getElementById(id);
+
+  /* Six columns is what stays readable on a phone and on one printed page.
+     Past that the table stops being a comparison and becomes a catalogue. */
+  const MAX_PICKED = 6;
+  const DEFAULT = ['PLA', 'PETG', 'ABS', 'PA6-CF'];
+
+  let picked = [...DEFAULT];
+
+  function sortMode() {
+    return form.elements.sortBy.value;
+  }
+
+  /** The picker, grouped by family or ranked by one property. */
+  function renderPicker() {
+    const mode = sortMode();
+    const host = $('picker');
+
+    if (mode === 'family') {
+      host.innerHTML = FAMILIES.map((fam) => {
+        const inFam = MATERIALS.filter((m) => m.family === fam);
+        return `<div class="picker__group">
+          <p class="picker__family">${fam}</p>
+          <div class="picker__chips">${inFam.map(chip).join('')}</div>
+        </div>`;
+      }).join('');
+    } else {
+      const order = rankedBy(mode);
+      host.innerHTML = `<div class="picker__group">
+        <p class="picker__family">Best ${RATED.find((r) => r.key === mode).label.toLowerCase()} first</p>
+        <div class="picker__chips">${order.map(chip).join('')}</div>
+      </div>`;
+    }
+  }
+
+  function chip(m) {
+    const on = picked.includes(m.name);
+    const full = !on && picked.length >= MAX_PICKED;
+    return `<button type="button" class="chip${on ? ' chip--on' : ''}"
+      data-material="${m.name}" ${full ? 'disabled' : ''}
+      aria-pressed="${on}">${m.name}</button>`;
+  }
+
+  const bar = (value) => {
+    if (value === undefined) return '<span class="bar bar--none">no figure</span>';
+    const pct = Math.max(2, Math.min(100, value * 100));
+    return `<span class="bar"><span class="bar__fill" style="width:${pct.toFixed(1)}%"></span></span>`;
+  };
+
+  function render() {
+    renderPicker();
+
+    const chosen = picked.map((n) => MATERIALS.find((m) => m.name === n)).filter(Boolean);
+    $('picker-note').textContent = picked.length >= MAX_PICKED
+      ? `Six is the most that stays readable. Deselect one to swap it out.`
+      : `${picked.length} of ${MAX_PICKED} selected.`;
+
+    if (!chosen.length) {
+      $('compare-head').innerHTML = '';
+      $('compare-body').innerHTML = '';
+      $('detail-head').innerHTML = '';
+      $('detail-body').innerHTML = '';
+      $('warnings').hidden = false;
+      $('warnings').textContent = 'Pick at least one filament to see its figures.';
+      renderWorking($('working'), []);
+      updateSheet(form, {});
+      return;
+    }
+    $('warnings').hidden = true;
+
+    $('compare-head').innerHTML = '<th class="table__head table__head--label">Property</th>'
+      + chosen.map((m) => `<th class="table__head">${m.name}</th>`).join('');
+
+    const out = [];
+
+    for (const { key, label } of RATED) {
+      out.push(`<tr class="table__row table__row--rated">
+        <td class="table__cell table__cell--label">${label}</td>
+        ${chosen.map((m) => `<td class="table__cell">${bar(ratings(m)[key])}</td>`).join('')}
+      </tr>`);
+    }
+
+    out.push(`<tr class="table__row table__row--rated">
+      <td class="table__cell table__cell--label">Printability</td>
+      ${chosen.map((m) => {
+        const d = difficulty(m);
+        return `<td class="table__cell"><span class="tag tag--${d.level.toLowerCase()}">${d.level}</span></td>`;
+      }).join('')}
+    </tr>`);
+
+    for (const row of KEY_ROWS) {
+      out.push(`<tr class="table__row">
+        <td class="table__cell table__cell--label">${row.label}${row.unit ? `<span class="table__unit">${row.unit}</span>` : ''}</td>
+        ${chosen.map((m) => {
+          const v = m[row.key];
+          if (v === null || v === undefined || v === '') return '<td class="table__cell table__cell--blank">not published</td>';
+          return `<td class="table__cell">${row.kind === 'text' ? v : formatValue(v, { decimals: v >= 100 ? 0 : 1 })}</td>`;
+        }).join('')}
+      </tr>`);
+    }
+
+    $('compare-body').innerHTML = out.join('');
+
+    $('detail-head').innerHTML = '<th class="table__head table__head--label">Property</th>'
+      + chosen.map((m) => `<th class="table__head">${m.name}</th>`).join('');
+    $('detail-body').innerHTML = DETAIL_ROWS.map((row) => `<tr class="table__row">
+        <td class="table__cell table__cell--label">${row.label}${row.unit ? `<span class="table__unit">${row.unit}</span>` : ''}</td>
+        ${chosen.map((m) => {
+          const v = m[row.key];
+          if (v === null || v === undefined || v === '') return '<td class="table__cell table__cell--blank">not published</td>';
+          return `<td class="table__cell">${row.kind === 'text' ? v : formatValue(v, { decimals: v >= 100 ? 0 : 1 })}</td>`;
+        }).join('')}
+      </tr>`).join('');
+
+    renderWorking($('working'), [
+      {
+        label: 'What the bars measure',
+        expr: 'rating = value / highest value in the guide',
+        values: chosen.map((m) => `${m.name} strength ${formatValue(figures(m).strength, { decimals: 0 })} MPa`).join(', '),
+        result: 'scaled against all nineteen materials, never against your selection',
+        note: 'Scaling against the selection would fill every bar when three mid-range materials are compared, and would change meaning each time a material was added or removed.',
+      },
+      {
+        label: 'Strength and stiffness',
+        expr: 'the mean of the tensile and bending figures',
+        values: chosen.map((m) => `${m.name} ${formatValue(m.tensileStrength, { decimals: 0 })} and ${formatValue(m.bendingStrength, { decimals: 0 })} MPa`).join(', '),
+        result: 'one figure per material',
+        note: 'A printed part is usually loaded both ways, and neither figure alone represents it.',
+      },
+      {
+        label: 'Ductility',
+        expr: 'log of elongation at break, against the highest in the guide',
+        values: chosen.map((m) => `${m.name} ${formatValue(m.elongation, { decimals: 0 })}%`).join(', '),
+        result: 'a scale that separates the rigid materials',
+        note: 'Elongation runs from 2% to 400%. Linear, every rigid material sits within a pixel of zero and the bar says nothing about the difference between PLA and nylon.',
+      },
+      {
+        label: 'Printability',
+        expr: 'drying, enclosure, hotend and bed requirements together',
+        values: chosen.map((m) => `${m.name}: ${difficulty(m).notes.join(', ') || 'no special requirements'}`).join(' \u00B7 '),
+        result: chosen.map((m) => `${m.name} ${difficulty(m).level}`).join(', '),
+        note: 'Not in the source. It is the question behind "can I print this on what I have", which the settings answer between them but none states outright.',
+      },
+    ]);
+
+    drawRadar(chosen);
+    updateSheet(form, {});
+  }
+
+  /* --- Radar -------------------------------------------------------------
+     Four axes, one shape per filament, overlaid.
+
+     A bar chart answers "which is strongest". A radar answers "what is this
+     material like", because the shape carries the trade: a spike on one axis
+     and a notch on another is the compromise a material represents, and two
+     shapes laid over each other show where they differ without reading a
+     single number.
+
+     Four axes is the most this should carry. Radar plots mislead as axes
+     multiply, because the area enclosed grows with the square of the values
+     and with how the axes happen to be ordered, and a reader sees area.
+     With four, and with the axes in a fixed order, the shape stays readable
+     as a shape rather than a score.
+
+     Layout budget stated, not guessed. */
+
+  const VIEW = { w: 340, h: 360 };
+  /* Short forms on the plot. "Heat resistance" set against the left axis
+     ran 63 units past the edge of the box; the table alongside carries the
+     full names. */
+  const AXIS_LABELS = ['Strength', 'Stiffness', 'Ductility', 'Heat', 'Easy'];
+
+  function drawRadar(chosen) {
+    const scene = $('radar-scene');
+    if (!chosen.length) { scene.innerHTML = ''; return; }
+
+    const n = (v) => Number(v.toFixed(2));
+    const cx = VIEW.w / 2;
+    const cy = 150;
+    const radius = 94;
+    const axes = RADAR_AXES.length;
+
+    // Twelve o'clock, then clockwise, so the order reads as it is listed.
+    const angle = (i) => (Math.PI * 2 * i) / axes - Math.PI / 2;
+    const at = (i, frac) => [
+      cx + Math.cos(angle(i)) * radius * frac,
+      cy + Math.sin(angle(i)) * radius * frac,
+    ];
+
+    const rings = [0.25, 0.5, 0.75, 1].map((f) => {
+      const pts = RADAR_AXES.map((_, i) => at(i, f).map(n).join(' ')).join(' L ');
+      return `<path class="radar__ring" d="M ${pts} Z"/>`;
+    }).join('');
+
+    const spokes = RADAR_AXES.map((_, i) => {
+      const [x, y] = at(i, 1);
+      return `<line class="radar__spoke" x1="${n(cx)}" y1="${n(cy)}" x2="${n(x)}" y2="${n(y)}"/>`;
+    }).join('');
+
+    const labels = AXIS_LABELS.map((label, i) => {
+      const [x, y] = at(i, 1.07);
+      const anchor = Math.abs(x - cx) < 6 ? 'middle' : x > cx ? 'start' : 'end';
+      return `<text class="diagram__value" x="${n(x)}" y="${n(y + 4)}" text-anchor="${anchor}">${label}</text>`;
+    }).join('');
+
+    /* A material with a gap on an axis is drawn to the centre on that axis
+       and called out below, rather than being left off the chart. */
+    const shapes = chosen.map((m, k) => {
+      const r = ratings(m);
+      const pts = RADAR_AXES.map(({ key }, i) => at(i, r[key] ?? 0).map(n).join(' ')).join(' L ');
+      return `<path class="radar__shape radar__shape--${k}" d="M ${pts} Z"/>`;
+    }).join('');
+
+    const legend = chosen.map((m, k) => {
+      const y = 288 + Math.floor(k / 2) * 17;
+      const x = k % 2 === 0 ? 22 : VIEW.w / 2 + 8;
+      return `<rect class="radar__key radar__key--${k}" x="${x}" y="${y - 8}" width="10" height="10" rx="2"/>
+        <text class="diagram__value" x="${x + 16}" y="${y + 1}">${m.name}</text>`;
+    }).join('');
+
+    scene.innerHTML = `
+      ${rings}
+      ${spokes}
+      ${shapes}
+      ${labels}
+      <text class="diagram__value" x="${n(cx)}" y="272" text-anchor="middle">outer edge = best in the guide</text>
+      ${legend}
+    `;
+  }
+
+  $('picker').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-material]');
+    if (!button || button.disabled) return;
+    const name = button.dataset.material;
+    picked = picked.includes(name)
+      ? picked.filter((n) => n !== name)
+      : [...picked, name].slice(0, MAX_PICKED);
+    form.elements.picked.value = picked.join(',');
+    render();
+  });
+
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'sortBy') render();
+  });
+
+  $('share').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const ok = await copyText(buildShareUrl(form));
+    const label = ok ? 'Link copied' : 'Copy failed, select the address bar instead';
+    button.classList.toggle('is-done', ok);
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    setTimeout(() => {
+      button.classList.remove('is-done');
+      button.setAttribute('aria-label', 'Copy a link to this comparison');
+      button.setAttribute('title', 'Copy a link to this comparison');
+    }, 2000);
+  });
+
+  /* Not a <details>. The printed sheet has to carry these figures whether or
+     not the reader opened them, and a details element cannot be forced open
+     from CSS: Chrome hides its content through ::details-content, which
+     display alone does not override. A class toggle can be opened by the
+     print stylesheet. */
+  $('figures-toggle').addEventListener('click', (event) => {
+    const open = $('figures').classList.toggle('is-open');
+    event.currentTarget.setAttribute('aria-expanded', String(open));
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  initFieldHelp();
+  showBuild();
+  readUrlState(form);
+  if (form.elements.picked.value) {
+    const restored = form.elements.picked.value.split(',')
+      .map((n) => n.trim())
+      .filter((n) => MATERIALS.some((m) => m.name === n));
+    if (restored.length) picked = restored.slice(0, MAX_PICKED);
+  }
+  form.elements.picked.value = picked.join(',');
+  render();
+  reportHeight();
+</script>
+
+</body>
+</html>

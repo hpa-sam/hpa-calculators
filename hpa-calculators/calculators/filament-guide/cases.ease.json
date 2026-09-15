@@ -1,0 +1,44 @@
+{
+  "module": "./formula.js",
+  "export": "ease",
+  "tolerance": 1e-09,
+  "note": "The radar's fifth axis is ease of printing, not difficulty. Every other axis means more is better and the plot says so underneath, so plotting difficulty outward would draw the hardest material as the biggest shape. The scale is set by the most demanding material in the guide rather than a fixed number, so adding a harder filament rescales the axis instead of pushing a shape past the outer ring.",
+  "cases": [
+    {
+      "name": "A filament needing nothing special is the easiest in the guide",
+      "input": {
+        "drying": "Optional",
+        "desiccant": "Ideally",
+        "enclosure": "Not Required",
+        "nozzle": "190-230",
+        "bed": "55-65",
+        "family": "Standard"
+      },
+      "expect": 1
+    },
+    {
+      "name": "Drying, an enclosure and a hot end pull ease toward zero",
+      "input": {
+        "drying": "Required",
+        "desiccant": "Required",
+        "enclosure": "Required",
+        "nozzle": "360-400",
+        "bed": "120-160",
+        "family": "High performance"
+      },
+      "expect": 0
+    },
+    {
+      "name": "An abrasive carbon grade costs ease even when it prints cool",
+      "input": {
+        "drying": "Optional",
+        "desiccant": "Required",
+        "enclosure": "Not Required",
+        "nozzle": "210-240",
+        "bed": "45-65",
+        "family": "Carbon filled"
+      },
+      "expect": 0.888888888889
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "module": "./formula.js",
+  "export": "ratings",
+  "tolerance": 1e-09,
+  "note": "Ratings are computed here rather than copied from the source sheet, whose own 0 to 1 columns did not follow one rule: strength, stiffness and temperature used a fixed divisor, ductility used another and was capped, and PEKK scored full marks for ductility on 40 percent elongation while PA11 scored 0.38 on 30. Each property is now scaled against the highest value among all nineteen materials, so a bar means the same thing in every row. Ductility is scaled logarithmically because elongation runs from 2 to 400 percent, and on a linear scale every rigid material sits at zero. Heat resistance is rated on glass transition rather than heat deflection, because deflection temperature is quoted at two different loads across the set and is not comparable; glass transition is one test reported the same way for all nineteen.",
+  "cases": [
+    {
+      "name": "The strongest material in the guide anchors the strength scale at 1",
+      "input": {
+        "tensileStrength": 130,
+        "bendingStrength": 141,
+        "tensileModulus": 5000,
+        "bendingModulus": 5460,
+        "elongation": 2,
+        "hdt": 184,
+        "glassTransition": 80
+      },
+      "expect": {
+        "strength": 1
+      }
+    },
+    {
+      "name": "PLA sits mid-field on strength and stiffness",
+      "input": {
+        "tensileStrength": 50,
+        "bendingStrength": 75,
+        "tensileModulus": 2700,
+        "bendingModulus": 2750,
+        "elongation": 15,
+        "hdt": 57,
+        "glassTransition": 60
+      },
+      "expect": {
+        "strength": 0.461254612546,
+        "stiffness": 0.519047619048,
+        "heat": 0.27906976744186046
+      }
+    },
+    {
+      "name": "The most elastic material anchors the ductility scale at 1",
+      "input": {
+        "tensileStrength": 10,
+        "bendingStrength": 20,
+        "tensileModulus": 50,
+        "bendingModulus": 60,
+        "elongation": 400,
+        "hdt": 60,
+        "glassTransition": 110
+      },
+      "expect": {
+        "ductility": 1
+      }
+    },
+    {
+      "name": "A log ductility scale keeps the rigid materials apart, where a linear one would not",
+      "input": {
+        "tensileStrength": 50,
+        "bendingStrength": 75,
+        "tensileModulus": 2700,
+        "bendingModulus": 2750,
+        "elongation": 15,
+        "hdt": 57,
+        "glassTransition": 60
+      },
+      "expect": {
+        "ductility": 0.451984682511
+      }
+    },
+    {
+      "name": "A missing figure yields no rating rather than a zero",
+      "input": {
+        "tensileStrength": 50,
+        "bendingStrength": 75,
+        "tensileModulus": 2700,
+        "bendingModulus": 2750,
+        "elongation": 15,
+        "hdt": null,
+        "glassTransition": null
+      },
+      "expect": {
+        "heatUndefined": true
+      }
+    }
+  ]
+}
